@@ -1,22 +1,23 @@
 package com.maarshgames.monsterassault.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.math.Rectangle;
-//import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.maarshgames.monsterassault.controller.LevelLoader;
+import com.maarshgames.monsterassault.model.Enemy.EnemyState;
 
 public class World {
 
 	/** Our player controlled hero **/
-	Bob bob;
+	public static Bob bob;
 	/** A world has a level through which Bob needs to go through **/
-	Level level;
+	public static Level level;
+
+	public static Array<Enemy> enemies = new Array<Enemy>();
 
 	/** The collision boxes **/
-	Array<Rectangle> collisionRects = new Array<Rectangle>();
+	public Array<Rectangle> collisionRects = new Array<Rectangle>();
 
 	// Getters -----------
 
@@ -32,8 +33,18 @@ public class World {
 		return level;
 	}
 
+	public Array<Enemy> getEnemies() {
+		return enemies;
+	}
+
+	public void addEnemy(Enemy enemy) {
+		enemies.add(enemy);
+	}
+
 	/** Return only the blocks that need to be drawn **/
-	public List<Block> getDrawableBlocks(int width, int height) {
+
+	public void populateDrawableItems(int width, int height,
+			List<Block> blocks, List<Enemy> enemies) {
 		int x = (int) bob.getPosition().x - width;
 		int y = (int) bob.getPosition().y - height;
 		if (x < 0) {
@@ -51,17 +62,23 @@ public class World {
 			y2 = level.getHeight() - 1;
 		}
 
-		List<Block> blocks = new ArrayList<Block>();
 		Block block;
+		Enemy enemy;
+		World.enemies.clear();
 		for (int col = x; col <= x2; col++) {
 			for (int row = y; row <= y2; row++) {
 				block = level.getBlocks()[col][row];
 				if (block != null) {
 					blocks.add(block);
 				}
+				enemy = level.getEnemies()[col][row];
+				if (enemy != null) {
+					enemy.setState(EnemyState.IDLE);
+					enemies.add(enemy);
+					World.enemies.add(enemy);
+				}
 			}
 		}
-		return blocks;
 	}
 
 	// --------------------
@@ -70,8 +87,9 @@ public class World {
 	}
 
 	private void createWorld() {
+
 		level = LevelLoader.loadLevel(1);
-		bob = new Bob(level.getSpanPosition());
+		bob = new Bob(level.getSpawnPosition());
 	}
 
 	// private void createDemoWorld() {

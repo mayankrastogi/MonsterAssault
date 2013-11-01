@@ -6,7 +6,7 @@ import com.maarshgames.monsterassault.MonsterAssault;
 public class MonsterAssaultDesktop {
 
 	public static void main(String[] args) {
-		new LwjglApplication(new MonsterAssault(), "Monster Assault", 480, 320,
+		new LwjglApplication(new MonsterAssault(), "Monster Assault", 848, 480,
 				true);
 	}
 

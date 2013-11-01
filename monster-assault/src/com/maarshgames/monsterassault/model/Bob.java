@@ -6,15 +6,19 @@ import com.badlogic.gdx.math.Vector2;
 public class Bob {
 
 	public enum State {
-		IDLE, WALKING, JUMPING, DYING
+		IDLE, WALKING, JUMPING, FIRING, DYING
 	}
 
-	public static final float SIZE = 0.5f; // half a unit
+	public static final float SIZE = 0.9f; // half a unit
+	public static final int HIT_POINTS = 100;
+	public static final int DAMAGE = 15;
 
 	Vector2 position = new Vector2();
 	Vector2 acceleration = new Vector2();
 	Vector2 velocity = new Vector2();
 	Rectangle bounds = new Rectangle();
+	int hitPoints = HIT_POINTS;
+	int damage = DAMAGE;
 	State state = State.IDLE;
 	boolean facingLeft = true;
 	float stateTime = 0;
@@ -25,7 +29,7 @@ public class Bob {
 		this.bounds.x = position.x;
 		this.bounds.y = position.y;
 		this.bounds.height = SIZE;
-		this.bounds.width = SIZE;
+		this.bounds.width = SIZE/2f;
 	}
 
 	public boolean isFacingLeft() {
@@ -52,12 +56,25 @@ public class Bob {
 		return bounds;
 	}
 
+	public int getHitPoints() {
+		return hitPoints;
+	}
+
+	public void setHitPoints(int hitPoints) {
+		this.hitPoints = hitPoints;
+	}
+
+	public int getDamage() {
+		return damage;
+	}
+
 	public State getState() {
 		return state;
 	}
 
 	public void setState(State newState) {
 		this.state = newState;
+		this.stateTime = 0;
 	}
 
 	public float getStateTime() {

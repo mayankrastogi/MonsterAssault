@@ -19,10 +19,10 @@ public class BobController {
 		LEFT, RIGHT, JUMP, FIRE
 	}
 
-	private static final long LONG_JUMP_PRESS = 150l;
+	private static final long LONG_JUMP_PRESS = 300l;
 	private static final float ACCELERATION = 20f;
 	private static final float GRAVITY = -20f;
-	private static final float MAX_JUMP_SPEED = 7f;
+	private static final float MAX_JUMP_SPEED = 5.3f;
 	private static final float DAMP = 0.90f;
 	private static final float MAX_VEL = 4f;
 
@@ -81,7 +81,7 @@ public class BobController {
 	}
 
 	public void firePressed() {
-		keys.get(keys.put(Keys.FIRE, false));
+		keys.get(keys.put(Keys.FIRE, true));
 	}
 
 	public void leftReleased() {
@@ -265,7 +265,7 @@ public class BobController {
 			for (int y = startY; y <= endY; y++) {
 				if (x >= 0 && x < world.getLevel().getWidth() && y >= 0
 						&& y < world.getLevel().getHeight()) {
-					collidable.add(world.getLevel().get(x, y));
+					collidable.add(world.getLevel().getBlock(x, y));
 				}
 			}
 		}
@@ -274,7 +274,7 @@ public class BobController {
 	/** Change Bob's state and parameters based on input controls **/
 	private boolean processInput() {
 		if (keys.get(Keys.JUMP)) {
-			if (!bob.getState().equals(State.JUMPING)) {
+			if (!bob.getState().equals(State.JUMPING) && !bob.getState().equals(State.FIRING)) {
 				jumpingPressed = true;
 				jumpPressedTime = System.currentTimeMillis();
 				bob.setState(State.JUMPING);
@@ -292,22 +292,28 @@ public class BobController {
 				}
 			}
 		}
-		if (keys.get(Keys.LEFT)) {
+		if (keys.get(Keys.LEFT) && !bob.getState().equals(State.FIRING)) {
 			// left is pressed
 			bob.setFacingLeft(true);
-			if (!bob.getState().equals(State.JUMPING)) {
+			if (!bob.getState().equals(State.JUMPING) && !bob.getState().equals(State.WALKING)) {
 				bob.setState(State.WALKING);
 			}
 			bob.getAcceleration().x = -ACCELERATION;
-		} else if (keys.get(Keys.RIGHT)) {
+		} else if (keys.get(Keys.RIGHT) && !bob.getState().equals(State.FIRING)) {
 			// left is pressed
 			bob.setFacingLeft(false);
-			if (!bob.getState().equals(State.JUMPING)) {
+			if (!bob.getState().equals(State.JUMPING) && !bob.getState().equals(State.WALKING)) {
 				bob.setState(State.WALKING);
 			}
 			bob.getAcceleration().x = ACCELERATION;
-		} else {
-			if (!bob.getState().equals(State.JUMPING)) {
+		} else if(keys.get(Keys.FIRE)) {
+			// fire is pressed
+			if (!bob.getState().equals(State.JUMPING) && !bob.getState().equals(State.WALKING) && !bob.getState().equals(State.FIRING)) {
+				bob.setState(State.FIRING);
+			}
+		}
+		else {
+			if (!bob.getState().equals(State.JUMPING) && !bob.getState().equals(State.IDLE)) {
 				bob.setState(State.IDLE);
 			}
 			bob.getAcceleration().x = 0;

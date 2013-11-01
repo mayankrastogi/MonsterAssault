@@ -3,66 +3,402 @@ textures.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-block
+bob-attack-01
   rotate: false
-  xy: 1, 9
-  size: 48, 48
-  orig: 48, 48
+  xy: 2, 418
+  size: 80, 80
+  orig: 80, 80
   offset: 0, 0
   index: -1
-bob-01
+bob-attack-03
   rotate: false
-  xy: 51, 29
-  size: 24, 28
-  orig: 24, 28
+  xy: 2, 418
+  size: 80, 80
+  orig: 80, 80
   offset: 0, 0
   index: -1
-bob-02
+bob-attack-02
   rotate: false
-  xy: 77, 29
-  size: 24, 28
-  orig: 24, 28
+  xy: 2, 336
+  size: 80, 80
+  orig: 80, 80
   offset: 0, 0
   index: -1
-bob-05
+bob-attack-pressed-01
   rotate: false
-  xy: 103, 29
-  size: 24, 28
-  orig: 24, 28
+  xy: 84, 418
+  size: 80, 80
+  orig: 80, 80
   offset: 0, 0
   index: -1
-bob-06
+bob-attack-pressed-02
   rotate: false
-  xy: 129, 29
-  size: 24, 28
-  orig: 24, 28
+  xy: 2, 254
+  size: 80, 80
+  orig: 80, 80
   offset: 0, 0
   index: -1
-bob-down
+bob-attack-pressed-03
   rotate: false
-  xy: 155, 29
-  size: 24, 28
-  orig: 24, 28
+  xy: 84, 336
+  size: 80, 80
+  orig: 80, 80
   offset: 0, 0
   index: -1
-bob-up
+bob-attack-pressed-04
   rotate: false
-  xy: 181, 29
-  size: 24, 28
-  orig: 24, 28
+  xy: 166, 418
+  size: 80, 80
+  orig: 80, 80
   offset: 0, 0
   index: -1
-bob-03
+bob-attack-pressed-05
   rotate: false
-  xy: 207, 31
-  size: 24, 26
-  orig: 24, 26
+  xy: 2, 172
+  size: 80, 80
+  orig: 80, 80
   offset: 0, 0
   index: -1
-bob-04
+bob-attack-pressed-06
   rotate: false
-  xy: 51, 1
-  size: 24, 26
-  orig: 24, 26
+  xy: 84, 254
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-attack-pressed-07
+  rotate: false
+  xy: 166, 336
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-attack-pressed-08
+  rotate: false
+  xy: 248, 418
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-ball-01
+  rotate: false
+  xy: 730, 451
+  size: 82, 47
+  orig: 82, 47
+  offset: 0, 0
+  index: -1
+bob-ball-02
+  rotate: false
+  xy: 814, 451
+  size: 82, 47
+  orig: 82, 47
+  offset: 0, 0
+  index: -1
+bob-ball-03
+  rotate: false
+  xy: 898, 451
+  size: 82, 47
+  orig: 82, 47
+  offset: 0, 0
+  index: -1
+bob-ball-04
+  rotate: false
+  xy: 730, 402
+  size: 82, 47
+  orig: 82, 47
+  offset: 0, 0
+  index: -1
+bob-ball-05
+  rotate: false
+  xy: 814, 402
+  size: 82, 47
+  orig: 82, 47
+  offset: 0, 0
+  index: -1
+bob-ball-06
+  rotate: false
+  xy: 898, 402
+  size: 82, 47
+  orig: 82, 47
+  offset: 0, 0
+  index: -1
+bob-ball-07
+  rotate: false
+  xy: 330, 51
+  size: 82, 47
+  orig: 82, 47
+  offset: 0, 0
+  index: -1
+bob-ball-08
+  rotate: false
+  xy: 320, 2
+  size: 82, 47
+  orig: 82, 47
+  offset: 0, 0
+  index: -1
+bob-ball-09
+  rotate: false
+  xy: 494, 215
+  size: 82, 47
+  orig: 82, 47
+  offset: 0, 0
+  index: -1
+bob-ball-10
+  rotate: false
+  xy: 484, 166
+  size: 82, 47
+  orig: 82, 47
+  offset: 0, 0
+  index: -1
+bob-die-01
+  rotate: false
+  xy: 2, 90
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-die-02
+  rotate: false
+  xy: 84, 172
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-die-03
+  rotate: false
+  xy: 166, 254
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-die-04
+  rotate: false
+  xy: 248, 336
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-die-05
+  rotate: false
+  xy: 330, 418
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-die-06
+  rotate: false
+  xy: 2, 8
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-duck-01
+  rotate: false
+  xy: 84, 90
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-duck-02
+  rotate: false
+  xy: 166, 172
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-hit-01
+  rotate: false
+  xy: 248, 254
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-hit-02
+  rotate: false
+  xy: 330, 336
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-hit-03
+  rotate: false
+  xy: 412, 418
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-idle-01
+  rotate: false
+  xy: 84, 8
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-idle-08
+  rotate: false
+  xy: 84, 8
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-idle-02
+  rotate: false
+  xy: 166, 90
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-idle-07
+  rotate: false
+  xy: 166, 90
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-idle-03
+  rotate: false
+  xy: 248, 172
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-idle-06
+  rotate: false
+  xy: 248, 172
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-idle-04
+  rotate: false
+  xy: 330, 254
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-idle-05
+  rotate: false
+  xy: 330, 254
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-jump
+  rotate: false
+  xy: 412, 336
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-move-01
+  rotate: false
+  xy: 494, 418
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-move-02
+  rotate: false
+  xy: 166, 8
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-move-06
+  rotate: false
+  xy: 166, 8
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-move-03
+  rotate: false
+  xy: 248, 90
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-move-05
+  rotate: false
+  xy: 248, 90
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-move-04
+  rotate: false
+  xy: 330, 172
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-run-01
+  rotate: false
+  xy: 412, 254
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-run-02
+  rotate: false
+  xy: 494, 336
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-run-04
+  rotate: false
+  xy: 494, 336
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-run-03
+  rotate: false
+  xy: 576, 418
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+door-closed
+  rotate: false
+  xy: 248, 18
+  size: 70, 70
+  orig: 70, 70
+  offset: 0, 0
+  index: -1
+door-open
+  rotate: false
+  xy: 330, 100
+  size: 70, 70
+  orig: 70, 70
+  offset: 0, 0
+  index: -1
+grassCenter
+  rotate: false
+  xy: 412, 182
+  size: 70, 70
+  orig: 70, 70
+  offset: 0, 0
+  index: -1
+grassLeft
+  rotate: false
+  xy: 494, 264
+  size: 70, 70
+  orig: 70, 70
+  offset: 0, 0
+  index: -1
+grassMid
+  rotate: false
+  xy: 576, 346
+  size: 70, 70
+  orig: 70, 70
+  offset: 0, 0
+  index: -1
+grassRight
+  rotate: false
+  xy: 658, 428
+  size: 70, 70
+  orig: 70, 70
   offset: 0, 0
   index: -1

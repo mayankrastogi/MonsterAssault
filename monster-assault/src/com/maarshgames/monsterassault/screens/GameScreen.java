@@ -7,6 +7,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.maarshgames.monsterassault.controller.BobController;
+import com.maarshgames.monsterassault.model.Enemy;
 import com.maarshgames.monsterassault.model.World;
 import com.maarshgames.monsterassault.view.WorldRenderer;
 
@@ -30,9 +31,12 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
+		Gdx.gl.glClearColor(0.48f, 0.83f, 0.9f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
+		for(Enemy enemy: world.getEnemies()) {
+			enemy.update(delta);
+		}
 		controller.update(delta);
 		renderer.render();
 	}
