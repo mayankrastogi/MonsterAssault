@@ -14,49 +14,49 @@ public class Justin extends Enemy {
 	public static final int HIT_POINTS = 30;
 	public static final int DAMAGE = 25;
 
-	private static final float ACCELERATION = 20f;
+	private static final float ACCELERATION = 10f;
 	private static final float GRAVITY = -20f;
-	private static final float MAX_JUMP_SPEED = 4f;
-	private static final float DAMP = 0.90f;
-	private static final float MAX_VEL = 3.5f;
-	
+	private static final float MAX_VEL = 2f;
+
 	private static final float IDLE_FRAME_DURATION = 0.3f;
 	private static final float RUNNING_FRAME_DURATION = 0.1f;
 	private static final float ATTACKING_FRAME_DURATION = 0.1f;
 
 	/** Textures **/
 	private static TextureAtlas atlas = null;
-	
+
 	private static TextureRegion jumpLeft;
 	private static TextureRegion jumpRight;
-	
+
 	private static Animation idleLeftAnimation;
 	private static Animation idleRightAnimation;
 	private static Animation walkLeftAnimation;
 	private static Animation walkRightAnimation;
 	private static Animation fireLeftAnimation;
 	private static Animation fireRightAnimation;
-	 
+
 	private boolean grounded;
+	private boolean initialUpdate = true;
 	private Array<Block> collidable = new Array<Block>();
 
 	public Justin(Vector2 position) {
 		super(position, SIZE, HIT_POINTS, DAMAGE, EnemyType.JUSTIN);
-		this.bounds.width = SIZE/2f;
+		this.bounds.width = SIZE / 2f;
 		this.bounds.height = SIZE;
-		if(atlas == null) {
+		if (atlas == null) {
 			loadTextures();
 		}
 		this.enemyFrame = idleLeftAnimation.getKeyFrame(stateTime, true);
 	}
 
 	private void loadTextures() {
-		atlas = new TextureAtlas(Gdx.files.internal("images/textures/Justin.pack"));
-		
+		atlas = new TextureAtlas(
+				Gdx.files.internal("images/textures/Justin.pack"));
+
 		jumpLeft = atlas.findRegion("justin-jump");
 		jumpRight = new TextureRegion(jumpLeft);
 		jumpRight.flip(true, false);
-		
+
 		TextureRegion[] idleLeftFrames = new TextureRegion[8];
 		for (int i = 0; i < 8; i++) {
 			idleLeftFrames[i] = atlas.findRegion("justin-idle-0" + (i + 1));
@@ -88,9 +88,10 @@ public class Justin extends Enemy {
 
 		TextureRegion[] fireLeftFrames = new TextureRegion[4];
 		for (int i = 0; i < 4; i++) {
-			fireLeftFrames[i] = atlas.findRegion("justin-attack-0"	+(i + 1));
+			fireLeftFrames[i] = atlas.findRegion("justin-attack-0" + (i + 1));
 		}
-		fireLeftAnimation = new Animation(ATTACKING_FRAME_DURATION, fireLeftFrames);
+		fireLeftAnimation = new Animation(ATTACKING_FRAME_DURATION,
+				fireLeftFrames);
 
 		TextureRegion[] fireRightFrames = new TextureRegion[4];
 		for (int i = 0; i < 4; i++) {
@@ -100,20 +101,17 @@ public class Justin extends Enemy {
 		fireRightAnimation = new Animation(ATTACKING_FRAME_DURATION,
 				fireRightFrames);
 	}
-	
+
 	private void updateEnemyFrame() {
 		if (state.equals(EnemyState.IDLE)) {
-			enemyFrame = facingLeft ? idleLeftAnimation.getKeyFrame(
-					stateTime, true) : idleRightAnimation.getKeyFrame(
-					stateTime, true);
+			enemyFrame = facingLeft ? idleLeftAnimation.getKeyFrame(stateTime,
+					true) : idleRightAnimation.getKeyFrame(stateTime, true);
 		} else if (state.equals(EnemyState.WALKING)) {
-			enemyFrame = facingLeft ? walkLeftAnimation.getKeyFrame(
-					stateTime, true) : walkRightAnimation.getKeyFrame(
-					stateTime, true);
+			enemyFrame = facingLeft ? walkLeftAnimation.getKeyFrame(stateTime,
+					true) : walkRightAnimation.getKeyFrame(stateTime, true);
 		} else if (state.equals(EnemyState.ATTACKING)) {
-			enemyFrame = facingLeft ? fireLeftAnimation.getKeyFrame(
-					stateTime, true) : fireRightAnimation.getKeyFrame(
-					stateTime, true);
+			enemyFrame = facingLeft ? fireLeftAnimation.getKeyFrame(stateTime,
+					true) : fireRightAnimation.getKeyFrame(stateTime, true);
 		} else if (state.equals(EnemyState.JUMPING)) {
 			enemyFrame = facingLeft ? jumpLeft : jumpRight;
 		}
@@ -124,11 +122,19 @@ public class Justin extends Enemy {
 		if (!state.equals(EnemyState.INACTIVE)) {
 			Bob bob = World.bob;
 
-			// TODO Enemy AI
+			if (initialUpdate) {
+				facingLeft = true;
+				state = EnemyState.WALKING;
+				initialUpdate = false;
+			}
 
-			if (grounded && state.equals(EnemyState.JUMPING) && !state.equals(EnemyState.IDLE)) {
+			if (grounded && state.equals(EnemyState.JUMPING)
+					&& !state.equals(EnemyState.IDLE)) {
 				setState(EnemyState.IDLE);
 			}
+			// Setting initial horizontal acceleration
+			acceleration.x = facingLeft ? -ACCELERATION : ACCELERATION;
+
 			// Setting initial vertical acceleration
 			acceleration.y = GRAVITY;
 
@@ -188,12 +194,14 @@ public class Justin extends Enemy {
 		// simulate Justin's movement on the X
 		enemyRect.x += velocity.x;
 
-		// if Justin collides, make his horizontal velocity 0
+		// if Justin collides, make his horizontal velocity 0 and change
+		// direction
 		for (Block block : collidable) {
 			if (block == null)
 				continue;
 			if (enemyRect.overlaps(block.getBounds())) {
 				velocity.x = 0;
+				facingLeft = !facingLeft;
 				break;
 			}
 		}
