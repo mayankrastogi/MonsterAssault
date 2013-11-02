@@ -1,12 +1,16 @@
 package com.maarshgames.monsterassault.model;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 public class Justin extends Enemy {
 
-	public static final float SIZE = 0.8f;
+	public static final float SIZE = 0.9f;
 	public static final int HIT_POINTS = 30;
 	public static final int DAMAGE = 25;
 
@@ -15,20 +19,104 @@ public class Justin extends Enemy {
 	private static final float MAX_JUMP_SPEED = 4f;
 	private static final float DAMP = 0.90f;
 	private static final float MAX_VEL = 3.5f;
+	
+	private static final float IDLE_FRAME_DURATION = 0.3f;
+	private static final float RUNNING_FRAME_DURATION = 0.1f;
+	private static final float ATTACKING_FRAME_DURATION = 0.1f;
 
-	/*
-	 * private static TextureAtlas atlas = new TextureAtlas(
-	 * Gdx.files.internal("images/textures/justin.pack"));
-	 */
-
+	/** Textures **/
+	private static TextureAtlas atlas = null;
+	
+	private static TextureRegion jumpLeft;
+	private static TextureRegion jumpRight;
+	
+	private static Animation idleLeftAnimation;
+	private static Animation idleRightAnimation;
+	private static Animation walkLeftAnimation;
+	private static Animation walkRightAnimation;
+	private static Animation fireLeftAnimation;
+	private static Animation fireRightAnimation;
+	 
 	private boolean grounded;
 	private Array<Block> collidable = new Array<Block>();
 
 	public Justin(Vector2 position) {
-		super(position, HIT_POINTS, DAMAGE, EnemyType.JUSTIN);
-		this.bounds.width = SIZE;
+		super(position, SIZE, HIT_POINTS, DAMAGE, EnemyType.JUSTIN);
+		this.bounds.width = SIZE/2f;
 		this.bounds.height = SIZE;
-		// this.enemyFrame = atlas.findRegion("justin-idle-left");
+		if(atlas == null) {
+			loadTextures();
+		}
+		this.enemyFrame = idleLeftAnimation.getKeyFrame(stateTime, true);
+	}
+
+	private void loadTextures() {
+		atlas = new TextureAtlas(Gdx.files.internal("images/textures/Justin.pack"));
+		
+		jumpLeft = atlas.findRegion("justin-jump");
+		jumpRight = new TextureRegion(jumpLeft);
+		jumpRight.flip(true, false);
+		
+		TextureRegion[] idleLeftFrames = new TextureRegion[8];
+		for (int i = 0; i < 8; i++) {
+			idleLeftFrames[i] = atlas.findRegion("justin-idle-0" + (i + 1));
+		}
+		idleLeftAnimation = new Animation(IDLE_FRAME_DURATION, idleLeftFrames);
+
+		TextureRegion[] idleRightFrames = new TextureRegion[8];
+		for (int i = 0; i < 8; i++) {
+			idleRightFrames[i] = new TextureRegion(idleLeftFrames[i]);
+			idleRightFrames[i].flip(true, false);
+		}
+		idleRightAnimation = new Animation(IDLE_FRAME_DURATION, idleRightFrames);
+
+		TextureRegion[] walkLeftFrames = new TextureRegion[6];
+		for (int i = 0; i < 6; i++) {
+			walkLeftFrames[i] = atlas.findRegion("justin-move-0" + (i + 1));
+		}
+		walkLeftAnimation = new Animation(RUNNING_FRAME_DURATION,
+				walkLeftFrames);
+
+		TextureRegion[] walkRightFrames = new TextureRegion[6];
+
+		for (int i = 0; i < 6; i++) {
+			walkRightFrames[i] = new TextureRegion(walkLeftFrames[i]);
+			walkRightFrames[i].flip(true, false);
+		}
+		walkRightAnimation = new Animation(RUNNING_FRAME_DURATION,
+				walkRightFrames);
+
+		TextureRegion[] fireLeftFrames = new TextureRegion[4];
+		for (int i = 0; i < 4; i++) {
+			fireLeftFrames[i] = atlas.findRegion("justin-attack-0"	+(i + 1));
+		}
+		fireLeftAnimation = new Animation(ATTACKING_FRAME_DURATION, fireLeftFrames);
+
+		TextureRegion[] fireRightFrames = new TextureRegion[4];
+		for (int i = 0; i < 4; i++) {
+			fireRightFrames[i] = new TextureRegion(fireLeftFrames[i]);
+			fireRightFrames[i].flip(true, false);
+		}
+		fireRightAnimation = new Animation(ATTACKING_FRAME_DURATION,
+				fireRightFrames);
+	}
+	
+	private void updateEnemyFrame() {
+		if (state.equals(EnemyState.IDLE)) {
+			enemyFrame = facingLeft ? idleLeftAnimation.getKeyFrame(
+					stateTime, true) : idleRightAnimation.getKeyFrame(
+					stateTime, true);
+		} else if (state.equals(EnemyState.WALKING)) {
+			enemyFrame = facingLeft ? walkLeftAnimation.getKeyFrame(
+					stateTime, true) : walkRightAnimation.getKeyFrame(
+					stateTime, true);
+		} else if (state.equals(EnemyState.ATTACKING)) {
+			enemyFrame = facingLeft ? fireLeftAnimation.getKeyFrame(
+					stateTime, true) : fireRightAnimation.getKeyFrame(
+					stateTime, true);
+		} else if (state.equals(EnemyState.JUMPING)) {
+			enemyFrame = facingLeft ? jumpLeft : jumpRight;
+		}
 	}
 
 	@Override
@@ -38,8 +126,8 @@ public class Justin extends Enemy {
 
 			// TODO Enemy AI
 
-			if (grounded && state.equals(EnemyState.JUMPING)) {
-				state = EnemyState.IDLE;
+			if (grounded && state.equals(EnemyState.JUMPING) && !state.equals(EnemyState.IDLE)) {
+				setState(EnemyState.IDLE);
 			}
 			// Setting initial vertical acceleration
 			acceleration.y = GRAVITY;
@@ -68,6 +156,7 @@ public class Justin extends Enemy {
 			}
 
 			stateTime += delta;
+			updateEnemyFrame();
 		}
 	}
 
@@ -147,7 +236,6 @@ public class Justin extends Enemy {
 
 		// un-scale velocity (not in frame time)
 		velocity.scl(1 / delta);
-
 	}
 
 	private void populateCollidableBlocks(int startX, int startY, int endX,
@@ -161,10 +249,5 @@ public class Justin extends Enemy {
 				}
 			}
 		}
-	}
-
-	@Override
-	public void render() {
-
 	}
 }

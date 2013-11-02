@@ -117,7 +117,7 @@ public class WorldRenderer {
 
 	private void loadTextures() {
 		TextureAtlas atlas = new TextureAtlas(
-				Gdx.files.internal("images/textures/textures.pack"));
+				Gdx.files.internal("images/textures/BobAndMap.pack"));
 
 		TextureRegion[] idleLeftFrames = new TextureRegion[8];
 		for (int i = 0; i < 8; i++) {
@@ -178,9 +178,11 @@ public class WorldRenderer {
 		drawBlocksAndEnemies();
 		drawBob();
 		spriteBatch.end();
-		drawCollisionBlocks();
-		if (debug)
+		
+		if (debug) {
+			drawCollisionBlocks();
 			drawDebug();
+		}
 	}
 
 	private void drawBlocksAndEnemies() {
@@ -197,7 +199,7 @@ public class WorldRenderer {
 					Block.SIZE);
 		}
 		for (Enemy enemy : enemies) {
-			// TODO draw enemies
+			spriteBatch.draw(enemy.getEnemyFrame(), enemy.getPosition().x-enemy.getSize()/4f, enemy.getPosition().y, enemy.getSize(), enemy.getSize()*1.1f);
 		}
 	}
 

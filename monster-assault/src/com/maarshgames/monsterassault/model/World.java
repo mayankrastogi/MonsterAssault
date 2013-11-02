@@ -73,7 +73,9 @@ public class World {
 				}
 				enemy = level.getEnemies()[col][row];
 				if (enemy != null) {
-					enemy.setState(EnemyState.IDLE);
+					if (enemy.getState().equals(EnemyState.INACTIVE)) {
+						enemy.setState(EnemyState.IDLE);
+					}
 					enemies.add(enemy);
 					World.enemies.add(enemy);
 				}

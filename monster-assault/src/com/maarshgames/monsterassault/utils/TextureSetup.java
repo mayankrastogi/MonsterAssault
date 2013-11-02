@@ -3,16 +3,12 @@
  */
 package com.maarshgames.monsterassault.utils;
 
-//import com.badlogic.gdx.tools.imagepacker.TexturePacker2;
+import com.badlogic.gdx.tools.imagepacker.TexturePacker2;
 
-/**
- * @author tamas
- * 
- */
 public class TextureSetup {
 
 	public static void main(String[] args) {
-		// TexturePacker2.process("/Users/tamas/tmp/star-guard-assets/",
-		// "/Users/tamas/tmp/sga/", "textures.pack");
+		 TexturePacker2.process("D:\\Projects\\GitHub\\MonsterAssault\\monster-assault-android\\assets\\images\\BobAndMap", "D:\\Projects\\GitHub\\MonsterAssault\\monster-assault-android\\assets\\images\\textures", "BobAndMap.pack");
+		 TexturePacker2.process("D:\\Projects\\GitHub\\MonsterAssault\\monster-assault-android\\assets\\images\\Justin", "D:\\Projects\\GitHub\\MonsterAssault\\monster-assault-android\\assets\\images\\textures", "Justin.pack");
 	}
 }

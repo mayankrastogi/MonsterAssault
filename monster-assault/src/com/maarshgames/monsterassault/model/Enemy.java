@@ -26,23 +26,26 @@ public abstract class Enemy {
 	float stateTime;
 	EnemyType enemyType;
 	TextureRegion enemyFrame;
-	
-	// This is the rectangle pool used in collision detection
-		// Good to avoid instantiation each frame
-	protected Pool<Rectangle> rectPool = new Pool<Rectangle>() {
-			@Override
-			protected Rectangle newObject() {
-				return new Rectangle();
-			}
-		};
+	float size;
 
-	public Enemy(Vector2 position, int hitPoints, int damage, EnemyType enemyType) {
+	// This is the rectangle pool used in collision detection
+	// Good to avoid instantiation each frame
+	protected Pool<Rectangle> rectPool = new Pool<Rectangle>() {
+		@Override
+		protected Rectangle newObject() {
+			return new Rectangle();
+		}
+	};
+
+	public Enemy(Vector2 position, float size, int hitPoints, int damage,
+			EnemyType enemyType) {
 		acceleration = new Vector2();
 		velocity = new Vector2();
 		bounds = new Rectangle();
 		this.position = position;
 		this.bounds.x = position.x;
 		this.bounds.y = position.y;
+		this.size = size;
 		this.hitPoints = hitPoints;
 		this.damage = damage;
 		this.enemyType = enemyType;
@@ -135,7 +138,9 @@ public abstract class Enemy {
 		this.enemyFrame = enemyFrame;
 	}
 
-	public abstract void update(float delta);
+	public float getSize() {
+		return size;
+	}
 
-	public abstract void render();
+	public abstract void update(float delta);
 }

@@ -1,0 +1,264 @@
+
+Justin.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+justin-attack-01
+  rotate: false
+  xy: 2, 2
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-attack-02
+  rotate: false
+  xy: 170, 87
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-attack-04
+  rotate: false
+  xy: 170, 87
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-attack-03
+  rotate: false
+  xy: 254, 172
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-ball-01
+  rotate: false
+  xy: 2, 169
+  size: 82, 83
+  orig: 82, 83
+  offset: 0, 0
+  index: -1
+justin-ball-02
+  rotate: false
+  xy: 2, 84
+  size: 82, 83
+  orig: 82, 83
+  offset: 0, 0
+  index: -1
+justin-ball-03
+  rotate: false
+  xy: 86, 169
+  size: 82, 83
+  orig: 82, 83
+  offset: 0, 0
+  index: -1
+justin-ball-04
+  rotate: false
+  xy: 86, 84
+  size: 82, 83
+  orig: 82, 83
+  offset: 0, 0
+  index: -1
+justin-ball-05
+  rotate: false
+  xy: 170, 169
+  size: 82, 83
+  orig: 82, 83
+  offset: 0, 0
+  index: -1
+justin-die-01
+  rotate: false
+  xy: 84, 2
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-die-02
+  rotate: false
+  xy: 336, 172
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-die-03
+  rotate: false
+  xy: 418, 172
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-die-04
+  rotate: false
+  xy: 500, 172
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-die-05
+  rotate: false
+  xy: 582, 172
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-die-06
+  rotate: false
+  xy: 664, 172
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-hit-01
+  rotate: false
+  xy: 746, 172
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-hit-02
+  rotate: false
+  xy: 828, 172
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-hit-03
+  rotate: false
+  xy: 910, 172
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-idle-01
+  rotate: false
+  xy: 166, 2
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-idle-08
+  rotate: false
+  xy: 166, 2
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-idle-02
+  rotate: false
+  xy: 254, 90
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-idle-07
+  rotate: false
+  xy: 254, 90
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-idle-03
+  rotate: false
+  xy: 336, 90
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-idle-06
+  rotate: false
+  xy: 336, 90
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-idle-04
+  rotate: false
+  xy: 418, 90
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-idle-05
+  rotate: false
+  xy: 418, 90
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-jump
+  rotate: false
+  xy: 500, 90
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-move-01
+  rotate: false
+  xy: 582, 90
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-move-02
+  rotate: false
+  xy: 664, 90
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-move-06
+  rotate: false
+  xy: 664, 90
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-move-03
+  rotate: false
+  xy: 746, 90
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-move-05
+  rotate: false
+  xy: 746, 90
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-move-04
+  rotate: false
+  xy: 828, 90
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-run-01
+  rotate: false
+  xy: 910, 90
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-run-02
+  rotate: false
+  xy: 248, 5
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-run-04
+  rotate: false
+  xy: 248, 5
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+justin-run-03
+  rotate: false
+  xy: 330, 8
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
