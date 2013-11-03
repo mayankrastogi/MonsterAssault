@@ -367,7 +367,7 @@ door-closed
   orig: 70, 70
   offset: 0, 0
   index: -1
-door-open
+door-opened
   rotate: false
   xy: 330, 100
   size: 70, 70

@@ -14,11 +14,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.maarshgames.monsterassault.model.Block;
-import com.maarshgames.monsterassault.model.Block.Type;
 import com.maarshgames.monsterassault.model.Bob;
+import com.maarshgames.monsterassault.model.Bob.State;
 import com.maarshgames.monsterassault.model.Enemy;
 import com.maarshgames.monsterassault.model.World;
-import com.maarshgames.monsterassault.model.Bob.State;
 
 public class WorldRenderer {
 
@@ -39,11 +38,6 @@ public class WorldRenderer {
 	private TextureRegion bobJumpLeft;
 	private TextureRegion bobJumpRight;
 
-	private TextureRegion blockGrassLeft;
-	private TextureRegion blockGrassRight;
-	private TextureRegion blockGrassCenter;
-	private TextureRegion blockGrassMid;
-
 	/** Animations **/
 	private Animation idleLeftAnimation;
 	private Animation idleRightAnimation;
@@ -54,19 +48,19 @@ public class WorldRenderer {
 
 	private SpriteBatch spriteBatch;
 	private boolean debug = false;
-	private int width;
-	private int height;
-	private float ppuX; // pixels per unit on the X axis
-	private float ppuY; // pixels per unit on the Y axis
+	// private int width;
+	// private int height;
+	// private float ppuX; // pixels per unit on the X axis
+	// private float ppuY; // pixels per unit on the Y axis
 	private float camX;
 	private float camY;
 
-	public void setSize(int w, int h) {
-		this.width = w;
-		this.height = h;
-		ppuX = (float) width / CAMERA_WIDTH;
-		ppuY = (float) height / CAMERA_HEIGHT;
-	}
+	// public void setSize(int w, int h) {
+	// this.width = w;
+	// this.height = h;
+	// // ppuX = (float) width / CAMERA_WIDTH;
+	// // ppuY = (float) height / CAMERA_HEIGHT;
+	// }
 
 	public boolean isDebug() {
 		return debug;
@@ -116,6 +110,7 @@ public class WorldRenderer {
 	}
 
 	private void loadTextures() {
+		// Load Bob's Textures
 		TextureAtlas atlas = new TextureAtlas(
 				Gdx.files.internal("images/textures/BobAndMap.pack"));
 
@@ -150,7 +145,8 @@ public class WorldRenderer {
 
 		TextureRegion[] fireLeftFrames = new TextureRegion[8];
 		for (int i = 0; i < 8; i++) {
-			fireLeftFrames[i] = atlas.findRegion("bob-attack-pressed-0"	+(i + 1));
+			fireLeftFrames[i] = atlas.findRegion("bob-attack-pressed-0"
+					+ (i + 1));
 		}
 		fireLeftAnimation = new Animation(FIRING_FRAME_DURATION, fireLeftFrames);
 
@@ -165,11 +161,6 @@ public class WorldRenderer {
 		bobJumpLeft = atlas.findRegion("bob-jump");
 		bobJumpRight = new TextureRegion(bobJumpLeft);
 		bobJumpRight.flip(true, false);
-
-		blockGrassLeft = atlas.findRegion("grassLeft");
-		blockGrassRight = atlas.findRegion("grassRight");
-		blockGrassCenter = atlas.findRegion("grassCenter");
-		blockGrassMid = atlas.findRegion("grassMid");
 	}
 
 	public void render() {
@@ -178,7 +169,7 @@ public class WorldRenderer {
 		drawBlocksAndEnemies();
 		drawBob();
 		spriteBatch.end();
-		
+
 		if (debug) {
 			drawCollisionBlocks();
 			drawDebug();
@@ -194,12 +185,13 @@ public class WorldRenderer {
 			// spriteBatch.draw(blockTexture, block.getPosition().x * ppuX,
 			// block.getPosition().y * ppuY, Block.SIZE * ppuX, Block.SIZE *
 			// ppuY);
-			spriteBatch.draw(getBlockTexture(block.getType()),
-					block.getPosition().x, block.getPosition().y, Block.SIZE,
-					Block.SIZE);
+			spriteBatch.draw(block.getTexture(), block.getPosition().x,
+					block.getPosition().y, Block.SIZE, Block.SIZE);
 		}
 		for (Enemy enemy : enemies) {
-			spriteBatch.draw(enemy.getEnemyFrame(), enemy.getPosition().x-enemy.getSize()/4f, enemy.getPosition().y, enemy.getSize(), enemy.getSize()*1.1f);
+			spriteBatch.draw(enemy.getEnemyFrame(), enemy.getPosition().x
+					- enemy.getSize() / 4f, enemy.getPosition().y,
+					enemy.getSize(), enemy.getSize() * 1.1f);
 		}
 	}
 
@@ -262,21 +254,5 @@ public class WorldRenderer {
 					Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE);
 		}
 		debugRenderer.end();
-
-	}
-
-	private TextureRegion getBlockTexture(Type blockType) {
-		switch (blockType) {
-		case grassLeft:
-			return blockGrassLeft;
-		case grassRight:
-			return blockGrassRight;
-		case grassCenter:
-			return blockGrassCenter;
-		case grassMid:
-			return blockGrassMid;
-		default:
-			return null;
-		}
 	}
 }

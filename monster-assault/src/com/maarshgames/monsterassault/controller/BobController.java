@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.maarshgames.monsterassault.model.Block;
+import com.maarshgames.monsterassault.model.Block.Type;
 import com.maarshgames.monsterassault.model.Bob;
 import com.maarshgames.monsterassault.model.World;
 import com.maarshgames.monsterassault.model.Bob.State;
@@ -179,9 +180,12 @@ public class BobController {
 
 		// if bob collides, make his horizontal velocity 0
 		for (Block block : collidable) {
-			if (block == null)
+			if (block == null || block.getType().equals(Type.DOOR_CLOSED))
 				continue;
 			if (bobRect.overlaps(block.getBounds())) {
+				if (block.getType().equals(Type.DOOR_OPENED)) {
+					// TODO Level completed
+				}
 				bob.getVelocity().x = 0;
 				world.getCollisionRects().add(block.getBounds());
 				break;
@@ -207,9 +211,12 @@ public class BobController {
 		bobRect.y += bob.getVelocity().y;
 
 		for (Block block : collidable) {
-			if (block == null)
+			if (block == null || block.getType().equals(Type.DOOR_CLOSED))
 				continue;
 			if (bobRect.overlaps(block.getBounds())) {
+				if (block.getType().equals(Type.DOOR_OPENED)) {
+					// TODO Level completed
+				}
 				if (bob.getVelocity().y < 0) {
 					grounded = true;
 					scrollUp = true;
@@ -274,7 +281,8 @@ public class BobController {
 	/** Change Bob's state and parameters based on input controls **/
 	private boolean processInput() {
 		if (keys.get(Keys.JUMP)) {
-			if (!bob.getState().equals(State.JUMPING) && !bob.getState().equals(State.FIRING)) {
+			if (!bob.getState().equals(State.JUMPING)
+					&& !bob.getState().equals(State.FIRING)) {
 				jumpingPressed = true;
 				jumpPressedTime = System.currentTimeMillis();
 				bob.setState(State.JUMPING);
@@ -295,25 +303,29 @@ public class BobController {
 		if (keys.get(Keys.LEFT) && !bob.getState().equals(State.FIRING)) {
 			// left is pressed
 			bob.setFacingLeft(true);
-			if (!bob.getState().equals(State.JUMPING) && !bob.getState().equals(State.WALKING)) {
+			if (!bob.getState().equals(State.JUMPING)
+					&& !bob.getState().equals(State.WALKING)) {
 				bob.setState(State.WALKING);
 			}
 			bob.getAcceleration().x = -ACCELERATION;
 		} else if (keys.get(Keys.RIGHT) && !bob.getState().equals(State.FIRING)) {
 			// left is pressed
 			bob.setFacingLeft(false);
-			if (!bob.getState().equals(State.JUMPING) && !bob.getState().equals(State.WALKING)) {
+			if (!bob.getState().equals(State.JUMPING)
+					&& !bob.getState().equals(State.WALKING)) {
 				bob.setState(State.WALKING);
 			}
 			bob.getAcceleration().x = ACCELERATION;
-		} else if(keys.get(Keys.FIRE)) {
+		} else if (keys.get(Keys.FIRE)) {
 			// fire is pressed
-			if (!bob.getState().equals(State.JUMPING) && !bob.getState().equals(State.WALKING) && !bob.getState().equals(State.FIRING)) {
+			if (!bob.getState().equals(State.JUMPING)
+					&& !bob.getState().equals(State.WALKING)
+					&& !bob.getState().equals(State.FIRING)) {
 				bob.setState(State.FIRING);
 			}
-		}
-		else {
-			if (!bob.getState().equals(State.JUMPING) && !bob.getState().equals(State.IDLE)) {
+		} else {
+			if (!bob.getState().equals(State.JUMPING)
+					&& !bob.getState().equals(State.IDLE)) {
 				bob.setState(State.IDLE);
 			}
 			bob.getAcceleration().x = 0;

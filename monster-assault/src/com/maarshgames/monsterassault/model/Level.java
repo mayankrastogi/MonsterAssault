@@ -9,7 +9,6 @@ public class Level {
 	private Block[][] blocks;
 	private Enemy[][] enemies;
 	private Vector2 spawnPosition;
-	private Vector2 exitPosition;
 
 	public int getWidth() {
 		return width;
@@ -50,7 +49,7 @@ public class Level {
 	public Block getBlock(int x, int y) {
 		return blocks[x][y];
 	}
-	
+
 	public Enemy getEnemy(int x, int y) {
 		return enemies[x][y];
 	}
@@ -61,14 +60,6 @@ public class Level {
 
 	public void setSpawnPosition(Vector2 spawnPosition) {
 		this.spawnPosition = spawnPosition;
-	}
-
-	public Vector2 getExitPosition() {
-		return exitPosition;
-	}
-
-	public void setExitPosition(Vector2 exitPosition) {
-		this.exitPosition = exitPosition;
 	}
 
 	/*
