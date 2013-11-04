@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import com.maarshgames.monsterassault.model.Ball;
 import com.maarshgames.monsterassault.model.Block;
 import com.maarshgames.monsterassault.model.Block.Type;
 import com.maarshgames.monsterassault.model.Bob;
@@ -322,6 +323,8 @@ public class BobController {
 					&& !bob.getState().equals(State.WALKING)
 					&& !bob.getState().equals(State.FIRING)) {
 				bob.setState(State.FIRING);
+				World.addBall(new Ball(new Vector2(bob.getPosition().x, bob
+						.getPosition().y+Bob.SIZE/4f), bob.isFacingLeft()));
 			}
 		} else {
 			if (!bob.getState().equals(State.JUMPING)

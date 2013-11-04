@@ -8,12 +8,14 @@ import java.util.List;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
+import com.maarshgames.monsterassault.model.Ball;
 import com.maarshgames.monsterassault.model.Block;
 import com.maarshgames.monsterassault.model.Bob;
 import com.maarshgames.monsterassault.model.Bob.State;
@@ -48,6 +50,7 @@ public class WorldRenderer {
 	private Animation fireRightAnimation;
 
 	private SpriteBatch spriteBatch;
+	private BitmapFont font;
 	private boolean debug = false;
 	// private int width;
 	// private int height;
@@ -107,6 +110,7 @@ public class WorldRenderer {
 		this.cam.update();
 		this.debug = debug;
 		spriteBatch = new SpriteBatch();
+		font = assets.get("fonts/villa.fnt", BitmapFont.class);
 		loadTextures();
 	}
 
@@ -168,7 +172,9 @@ public class WorldRenderer {
 		spriteBatch.setProjectionMatrix(cam.combined);
 		spriteBatch.begin();
 		drawBlocksAndEnemies();
+		drawBalls();
 		drawBob();
+		drawScore();
 		spriteBatch.end();
 
 		if (debug) {
@@ -179,9 +185,8 @@ public class WorldRenderer {
 
 	private void drawBlocksAndEnemies() {
 		List<Block> blocks = new ArrayList<Block>();
-		List<Enemy> enemies = new ArrayList<Enemy>();
 		world.populateDrawableItems((int) CAMERA_WIDTH, (int) CAMERA_HEIGHT,
-				blocks, enemies);
+				blocks);
 		for (Block block : blocks) {
 			// spriteBatch.draw(blockTexture, block.getPosition().x * ppuX,
 			// block.getPosition().y * ppuY, Block.SIZE * ppuX, Block.SIZE *
@@ -189,10 +194,17 @@ public class WorldRenderer {
 			spriteBatch.draw(block.getTexture(), block.getPosition().x,
 					block.getPosition().y, Block.SIZE, Block.SIZE);
 		}
-		for (Enemy enemy : enemies) {
+		for (Enemy enemy : world.getEnemies()) {
 			spriteBatch.draw(enemy.getEnemyFrame(), enemy.getPosition().x
 					- enemy.getSize() / 4f, enemy.getPosition().y,
 					enemy.getSize(), enemy.getSize() * 1.1f);
+		}
+	}
+
+	private void drawBalls() {
+		for (Ball ball : World.balls) {
+			spriteBatch.draw(ball.getBallFrame(), ball.getPosition().x,
+					ball.getPosition().y, Ball.SIZE, Ball.SIZE * 0.6f);
 		}
 	}
 
@@ -220,12 +232,15 @@ public class WorldRenderer {
 				bob.getPosition().y, Bob.SIZE, Bob.SIZE * 1.1f);
 	}
 
+	private void drawScore() {
+		// TODO render score
+	}
+
 	private void drawDebug() {
 		// render blocks
 		List<Block> blocks = new ArrayList<Block>();
-		List<Enemy> enemies = new ArrayList<Enemy>();
 		world.populateDrawableItems((int) CAMERA_WIDTH, (int) CAMERA_HEIGHT,
-				blocks, enemies);
+				blocks);
 		debugRenderer.setProjectionMatrix(cam.combined);
 		debugRenderer.begin(ShapeType.Line);
 		for (Block block : blocks) {
@@ -233,9 +248,14 @@ public class WorldRenderer {
 			debugRenderer.setColor(new Color(1, 0, 0, 1));
 			debugRenderer.rect(rect.x, rect.y, rect.width, rect.height);
 		}
-		for (Enemy enemy : enemies) {
+		for (Enemy enemy : world.getEnemies()) {
 			Rectangle rect = enemy.getBounds();
 			debugRenderer.setColor(new Color(0, 0, 0, 1));
+			debugRenderer.rect(rect.x, rect.y, rect.width, rect.height);
+		}
+		for (Ball ball : world.getBalls()) {
+			Rectangle rect = ball.getBounds();
+			debugRenderer.setColor(new Color(0, 0, 1, 1));
 			debugRenderer.rect(rect.x, rect.y, rect.width, rect.height);
 		}
 		// render Bob

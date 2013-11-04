@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.Array;
 public class Justin extends Enemy {
 
 	public static final float SIZE = 0.9f;
-	public static final int HIT_POINTS = 30;
+	public static final int HIT_POINTS = 40;
 	public static final int DAMAGE = 25;
 
 	private static final float ACCELERATION = 10f;
@@ -22,6 +22,8 @@ public class Justin extends Enemy {
 	private static final float IDLE_FRAME_DURATION = 0.3f;
 	private static final float RUNNING_FRAME_DURATION = 0.1f;
 	private static final float ATTACKING_FRAME_DURATION = 0.1f;
+	private static final float DYING_FRAME_DURATION = 0.2f;
+	private static final float HIT_FRAME_DURATION = 0.2f;
 
 	/** Textures **/
 	private static TextureAtlas atlas = null;
@@ -35,6 +37,10 @@ public class Justin extends Enemy {
 	private static Animation walkRightAnimation;
 	private static Animation fireLeftAnimation;
 	private static Animation fireRightAnimation;
+	private static Animation hitLeftAnimation;
+	private static Animation hitRightAnimation;
+	private static Animation dieLeftAnimation;
+	private static Animation dieRightAnimation;
 
 	private boolean grounded;
 	private boolean initialUpdate = true;
@@ -100,10 +106,39 @@ public class Justin extends Enemy {
 		}
 		fireRightAnimation = new Animation(ATTACKING_FRAME_DURATION,
 				fireRightFrames);
+
+		TextureRegion[] hitLeftFrames = new TextureRegion[3];
+		for (int i = 0; i < 3; i++) {
+			hitLeftFrames[i] = atlas.findRegion("justin-hit-0" + (i + 1));
+		}
+		hitLeftAnimation = new Animation(HIT_FRAME_DURATION, hitLeftFrames);
+
+		TextureRegion[] hitRightFrames = new TextureRegion[3];
+		for (int i = 0; i < 3; i++) {
+			hitRightFrames[i] = new TextureRegion(hitLeftFrames[i]);
+			hitRightFrames[i].flip(true, false);
+		}
+		hitRightAnimation = new Animation(HIT_FRAME_DURATION, hitRightFrames);
+
+		TextureRegion[] dieLeftFrames = new TextureRegion[6];
+		for (int i = 0; i < 6; i++) {
+			dieLeftFrames[i] = atlas.findRegion("justin-die-0" + (i + 1));
+		}
+		dieLeftAnimation = new Animation(DYING_FRAME_DURATION, dieLeftFrames);
+
+		TextureRegion[] dieRightFrames = new TextureRegion[6];
+		for (int i = 0; i < 6; i++) {
+			dieRightFrames[i] = new TextureRegion(dieLeftFrames[i]);
+			dieRightFrames[i].flip(true, false);
+		}
+		dieRightAnimation = new Animation(DYING_FRAME_DURATION, dieRightFrames);
 	}
 
 	private void updateEnemyFrame() {
-		if (state.equals(EnemyState.IDLE)) {
+		if (hit) {
+			enemyFrame = facingLeft ? hitLeftAnimation.getKeyFrame(stateTime,
+					true) : hitRightAnimation.getKeyFrame(stateTime, true);
+		} else if (state.equals(EnemyState.IDLE)) {
 			enemyFrame = facingLeft ? idleLeftAnimation.getKeyFrame(stateTime,
 					true) : idleRightAnimation.getKeyFrame(stateTime, true);
 		} else if (state.equals(EnemyState.WALKING)) {
@@ -114,12 +149,30 @@ public class Justin extends Enemy {
 					true) : fireRightAnimation.getKeyFrame(stateTime, true);
 		} else if (state.equals(EnemyState.JUMPING)) {
 			enemyFrame = facingLeft ? jumpLeft : jumpRight;
+		} else if (state.equals(EnemyState.DYING)) {
+			enemyFrame = facingLeft ? dieLeftAnimation.getKeyFrame(stateTime,
+					true) : dieRightAnimation.getKeyFrame(stateTime, true);
 		}
 	}
 
 	@Override
 	public void update(float delta) {
 		if (!state.equals(EnemyState.INACTIVE)) {
+			stateTime += delta;
+
+			// check if enemy enemy is dead
+			if (hitPoints <= 0 && !state.equals(EnemyState.DYING)) {
+				setState(EnemyState.DYING);
+			}
+
+			// If enemy is dead, remove him and update score
+			if (state.equals(EnemyState.DYING)
+					&& stateTime >= DYING_FRAME_DURATION * 6) {
+				World.score += HIT_POINTS;
+				World.removeEnemy(this);
+				return;
+			}
+
 			Bob bob = World.bob;
 
 			if (initialUpdate) {
@@ -132,8 +185,23 @@ public class Justin extends Enemy {
 					&& !state.equals(EnemyState.IDLE)) {
 				setState(EnemyState.IDLE);
 			}
-			// Setting initial horizontal acceleration
-			acceleration.x = facingLeft ? -ACCELERATION : ACCELERATION;
+
+			if (hit) {
+				// Stop movement if enemy is hit
+				acceleration.x = 0;
+				velocity.x = 0;
+				if (stateTime >= HIT_FRAME_DURATION * 3) {
+					hit = false;
+				}
+			} else {
+				// Setting initial horizontal acceleration
+				if (state.equals(EnemyState.DYING)) {
+					acceleration.x = 0;
+					velocity.x = 0;
+				} else {
+					acceleration.x = facingLeft ? -ACCELERATION : ACCELERATION;
+				}
+			}
 
 			// Setting initial vertical acceleration
 			acceleration.y = GRAVITY;
@@ -161,7 +229,6 @@ public class Justin extends Enemy {
 				velocity.x = -MAX_VEL;
 			}
 
-			stateTime += delta;
 			updateEnemyFrame();
 		}
 	}
@@ -256,6 +323,16 @@ public class Justin extends Enemy {
 					collidable.add(World.level.getBlock(x, y));
 				}
 			}
+		}
+	}
+
+	@Override
+	public void hit(int damage) {
+		if (!hit && !state.equals(EnemyState.DYING)) {
+			hit = true;
+			stateTime = 0;
+			World.score += (hitPoints > damage) ? damage : hitPoints;
+			hitPoints -= damage;
 		}
 	}
 }

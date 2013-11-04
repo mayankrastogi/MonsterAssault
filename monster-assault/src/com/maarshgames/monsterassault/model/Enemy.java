@@ -12,7 +12,7 @@ public abstract class Enemy {
 	}
 
 	public enum EnemyState {
-		INACTIVE, IDLE, WALKING, JUMPING, ATTACKING, DYING, DEAD
+		INACTIVE, IDLE, WALKING, JUMPING, ATTACKING, DYING
 	}
 
 	Vector2 position;
@@ -27,6 +27,7 @@ public abstract class Enemy {
 	EnemyType enemyType;
 	TextureRegion enemyFrame;
 	float size;
+	boolean hit;
 
 	// This is the rectangle pool used in collision detection
 	// Good to avoid instantiation each frame
@@ -53,6 +54,7 @@ public abstract class Enemy {
 		facingLeft = true;
 		state = EnemyState.INACTIVE;
 		stateTime = 0;
+		hit = false;
 	}
 
 	public boolean isFacingLeft() {
@@ -143,4 +145,6 @@ public abstract class Enemy {
 	}
 
 	public abstract void update(float delta);
+
+	public abstract void hit(int damage);
 }

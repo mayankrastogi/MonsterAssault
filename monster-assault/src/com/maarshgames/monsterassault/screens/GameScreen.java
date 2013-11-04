@@ -8,6 +8,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.maarshgames.monsterassault.MonsterAssault;
 import com.maarshgames.monsterassault.controller.BobController;
+import com.maarshgames.monsterassault.model.Ball;
 import com.maarshgames.monsterassault.model.Enemy;
 import com.maarshgames.monsterassault.model.World;
 import com.maarshgames.monsterassault.view.WorldRenderer;
@@ -42,6 +43,9 @@ public class GameScreen implements Screen, InputProcessor {
 
 		for (Enemy enemy : world.getEnemies()) {
 			enemy.update(delta);
+		}
+		for (Ball ball : world.getBalls()) {
+			ball.update(delta);
 		}
 		controller.update(delta);
 		renderer.render();

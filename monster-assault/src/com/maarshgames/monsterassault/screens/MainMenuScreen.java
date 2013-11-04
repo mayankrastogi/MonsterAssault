@@ -104,7 +104,7 @@ public class MainMenuScreen implements Screen, InputProcessor {
 		if (keycode == Keys.BACK) {
 			Gdx.app.exit();
 		} else if (keycode == Keys.ENTER) {
-			game.setScreen(game.gameScreen);
+			game.setScreen(game.loadingScreen);
 		}
 		return true;
 	}
