@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
+import com.maarshgames.monsterassault.MonsterAssault;
 import com.maarshgames.monsterassault.controller.BobController;
 import com.maarshgames.monsterassault.model.Enemy;
 import com.maarshgames.monsterassault.model.World;
@@ -13,6 +14,7 @@ import com.maarshgames.monsterassault.view.WorldRenderer;
 
 public class GameScreen implements Screen, InputProcessor {
 
+	private MonsterAssault game;
 	private World world;
 	private WorldRenderer renderer;
 	private BobController controller;
@@ -20,6 +22,10 @@ public class GameScreen implements Screen, InputProcessor {
 	private int width, height;
 
 	private int touchLeft, touchRight, touchJump;
+
+	public GameScreen(MonsterAssault game) {
+		this.game = game;
+	}
 
 	@Override
 	public void show() {
@@ -34,7 +40,7 @@ public class GameScreen implements Screen, InputProcessor {
 		Gdx.gl.glClearColor(0.48f, 0.83f, 0.9f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
-		for(Enemy enemy: world.getEnemies()) {
+		for (Enemy enemy : world.getEnemies()) {
 			enemy.update(delta);
 		}
 		controller.update(delta);
@@ -43,7 +49,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public void resize(int width, int height) {
-		renderer.setSize(width, height);
+		// renderer.setSize(width, height);
 		this.width = width;
 		this.height = height;
 		this.touchLeft = width / 8;
@@ -98,6 +104,8 @@ public class GameScreen implements Screen, InputProcessor {
 			controller.jumpReleased();
 		if (keycode == Keys.X)
 			controller.fireReleased();
+		if (keycode == Keys.BACK)
+			game.setScreen(game.mainMenuScreen);
 		return true;
 	}
 

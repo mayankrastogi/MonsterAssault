@@ -1,13 +1,14 @@
 package com.maarshgames.monsterassault.controller;
 
-import com.badlogic.gdx.Gdx;
+import static com.maarshgames.monsterassault.MonsterAssault.assets;
+
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.maarshgames.monsterassault.model.Block;
+import com.maarshgames.monsterassault.model.Block.Type;
 import com.maarshgames.monsterassault.model.Enemy;
 import com.maarshgames.monsterassault.model.Justin;
-import com.maarshgames.monsterassault.model.Block.Type;
 import com.maarshgames.monsterassault.model.Level;
 
 public class LevelLoader {
@@ -28,14 +29,14 @@ public class LevelLoader {
 
 	public static Level loadLevel(int number) {
 		// Load block textures
-		Block.loadTextures(new TextureAtlas(Gdx.files
-				.internal("images/textures/BobAndMap.pack")));
+		Block.loadTextures(assets.get("images/textures/BobAndMap.pack",
+				TextureAtlas.class));
 
 		Level level = new Level();
 
 		// Loading the png into a Pixmap
-		Pixmap pixmap = new Pixmap(Gdx.files.internal(LEVEL_PREFIX + number
-				+ ".png"));
+		Pixmap pixmap = assets
+				.get(LEVEL_PREFIX + number + ".png", Pixmap.class);
 
 		// setting the size of the level based on the size of the pixmap
 		level.setWidth(pixmap.getWidth());
@@ -101,7 +102,8 @@ public class LevelLoader {
 		level.setEnemies(enemies);
 
 		// Clear memory for pixmap
-		pixmap.dispose();
+		pixmap = null;
+		assets.unload(LEVEL_PREFIX + number + ".png");
 
 		return level;
 	}

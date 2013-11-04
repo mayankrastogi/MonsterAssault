@@ -1,6 +1,7 @@
 package com.maarshgames.monsterassault.model;
 
-import com.badlogic.gdx.Gdx;
+import static com.maarshgames.monsterassault.MonsterAssault.assets;
+
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -50,8 +51,7 @@ public class Justin extends Enemy {
 	}
 
 	private void loadTextures() {
-		atlas = new TextureAtlas(
-				Gdx.files.internal("images/textures/Justin.pack"));
+		atlas = assets.get("images/textures/Justin.pack", TextureAtlas.class);
 
 		jumpLeft = atlas.findRegion("justin-jump");
 		jumpRight = new TextureRegion(jumpLeft);

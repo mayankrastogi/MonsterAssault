@@ -1,9 +1,10 @@
 package com.maarshgames.monsterassault.view;
 
+import static com.maarshgames.monsterassault.MonsterAssault.assets;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -111,8 +112,8 @@ public class WorldRenderer {
 
 	private void loadTextures() {
 		// Load Bob's Textures
-		TextureAtlas atlas = new TextureAtlas(
-				Gdx.files.internal("images/textures/BobAndMap.pack"));
+		TextureAtlas atlas = assets.get("images/textures/BobAndMap.pack",
+				TextureAtlas.class);
 
 		TextureRegion[] idleLeftFrames = new TextureRegion[8];
 		for (int i = 0; i < 8; i++) {
