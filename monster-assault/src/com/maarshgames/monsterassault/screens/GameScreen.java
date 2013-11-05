@@ -22,7 +22,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	private int width, height;
 
-	private int touchLeft, touchRight, touchJump;
+	private int touchLeft, touchRight, touchFire, touchJump;
 
 	public GameScreen(MonsterAssault game) {
 		this.game = game;
@@ -32,7 +32,7 @@ public class GameScreen implements Screen, InputProcessor {
 	public void show() {
 		world = new World();
 		renderer = new WorldRenderer(world, false);
-		controller = new BobController(world, renderer);
+		controller = new BobController(game, world, renderer);
 		Gdx.input.setInputProcessor(this);
 	}
 
@@ -58,6 +58,7 @@ public class GameScreen implements Screen, InputProcessor {
 		this.height = height;
 		this.touchLeft = width / 8;
 		this.touchRight = width / 4;
+		this.touchFire = (6 * width) / 8;
 		this.touchJump = (7 * width) / 8;
 	}
 
@@ -131,6 +132,9 @@ public class GameScreen implements Screen, InputProcessor {
 			controller.leftReleased();
 			controller.rightPressed();
 		}
+		if (x > touchFire && x < touchJump) {
+			controller.firePressed();
+		}
 		if (x > touchJump) {
 			controller.jumpPressed();
 		}
@@ -146,6 +150,9 @@ public class GameScreen implements Screen, InputProcessor {
 		}
 		if (x > touchLeft && x < touchRight) {
 			controller.rightReleased();
+		}
+		if (x > touchFire && x < touchJump) {
+			controller.fireReleased();
 		}
 		if (x > touchJump) {
 			controller.jumpReleased();

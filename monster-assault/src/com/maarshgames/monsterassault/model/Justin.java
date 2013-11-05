@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.maarshgames.monsterassault.model.Bob.State;
 
 public class Justin extends Enemy {
 
@@ -137,7 +138,7 @@ public class Justin extends Enemy {
 	private void updateEnemyFrame() {
 		if (hit) {
 			enemyFrame = facingLeft ? hitLeftAnimation.getKeyFrame(stateTime,
-					true) : hitRightAnimation.getKeyFrame(stateTime, true);
+					false) : hitRightAnimation.getKeyFrame(stateTime, false);
 		} else if (state.equals(EnemyState.IDLE)) {
 			enemyFrame = facingLeft ? idleLeftAnimation.getKeyFrame(stateTime,
 					true) : idleRightAnimation.getKeyFrame(stateTime, true);
@@ -151,7 +152,7 @@ public class Justin extends Enemy {
 			enemyFrame = facingLeft ? jumpLeft : jumpRight;
 		} else if (state.equals(EnemyState.DYING)) {
 			enemyFrame = facingLeft ? dieLeftAnimation.getKeyFrame(stateTime,
-					true) : dieRightAnimation.getKeyFrame(stateTime, true);
+					false) : dieRightAnimation.getKeyFrame(stateTime, false);
 		}
 	}
 
@@ -167,7 +168,7 @@ public class Justin extends Enemy {
 
 			// If enemy is dead, remove him and update score
 			if (state.equals(EnemyState.DYING)
-					&& stateTime >= DYING_FRAME_DURATION * 6) {
+					&& stateTime >= DYING_FRAME_DURATION * 7) {
 				World.score += HIT_POINTS;
 				World.removeEnemy(this);
 				return;
@@ -217,8 +218,10 @@ public class Justin extends Enemy {
 			checkCollisionWithBlocks(delta);
 
 			// check collision with Bob
-			if (bob.getBounds().overlaps(bounds)) {
-				// TODO update score
+			if (!bob.isHit() && !bob.getState().equals(State.DYING)
+					&& !state.equals(EnemyState.DYING)
+					&& bob.getBounds().overlaps(bounds)) {
+				bob.hit(damage);
 			}
 
 			// ensure terminal velocity is not exceeded

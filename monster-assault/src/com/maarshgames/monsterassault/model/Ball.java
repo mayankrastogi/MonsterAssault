@@ -20,7 +20,7 @@ public class Ball {
 	public static final float SIZE = 0.7f;
 	public static final float MAX_VELOCITY = 8f;
 	public static final float ACCELERATION = 20f;
-	public static final float LAUNCHED_FRAME_DURATION = 0.15f;
+	public static final float LAUNCHED_FRAME_DURATION = 0.1f;
 	public static final float MOVING_FRAME_DURATION = 0.2f;
 	public static final float HIT_FRAME_DURATION = 0.1f;
 
@@ -51,17 +51,29 @@ public class Ball {
 		}
 	};
 
-	public Ball(Vector2 position, boolean facingLeft) {
-		this.acceleration = new Vector2();
-		this.velocity = new Vector2();
-		this.position = position;
-		this.bounds = new Rectangle(position.x, position.y, SIZE, SIZE * 0.6f);
+	public void setBall(float x, float y, boolean facingLeft) {
+		// reset previous ball parameters and set new ones
+		this.acceleration.x = 0;
+		this.acceleration.y = 0;
+		this.velocity.x = 0;
+		this.velocity.y = 0;
+		this.position.x = x;
+		this.position.y = y;
+		this.bounds.x = x;
+		this.bounds.y = y;
 		this.state = BallState.LAUNCHED;
 		this.facingLeft = facingLeft;
+		updateBallFrame();
+	}
+
+	public Ball() {
+		this.acceleration = new Vector2();
+		this.velocity = new Vector2();
+		this.position = new Vector2();
+		this.bounds = new Rectangle(0, 0, SIZE, SIZE * 0.6f);
 		if (atlas == null) {
 			loadTextures();
 		}
-		updateBallFrame();
 	}
 
 	private void loadTextures() {
@@ -186,9 +198,9 @@ public class Ball {
 		velocity.scl(delta);
 
 		// Obtain the rectangle from the pool instead of instantiating it
-		Rectangle enemyRect = rectPool.obtain();
+		Rectangle ballRect = rectPool.obtain();
 		// set the rectangle to ball's bounding box
-		enemyRect.set(bounds.x, bounds.y, bounds.width, bounds.height);
+		ballRect.set(bounds.x, bounds.y, bounds.width, bounds.height);
 
 		// check the movement on the horizontal X axis
 		int startX, endX;
@@ -207,13 +219,13 @@ public class Ball {
 		populateCollidableBlocks(startX, startY, endX, endY);
 
 		// simulate ball's movement on the X
-		enemyRect.x += velocity.x;
+		ballRect.x += velocity.x;
 
 		// if ball collides, make its horizontal velocity 0 and change state
 		for (Block block : collidable) {
 			if (block == null)
 				continue;
-			if (enemyRect.overlaps(block.getBounds())) {
+			if (ballRect.overlaps(block.getBounds())) {
 				velocity.x = 0;
 				setState(BallState.HIT);
 				break;
@@ -221,7 +233,7 @@ public class Ball {
 		}
 
 		// reset the x position of the collision box
-		enemyRect.x = position.x;
+		ballRect.x = position.x;
 
 		// update position
 		position.add(velocity);

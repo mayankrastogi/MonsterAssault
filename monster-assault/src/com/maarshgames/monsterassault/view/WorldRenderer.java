@@ -26,9 +26,12 @@ public class WorldRenderer {
 
 	private static final float CAMERA_WIDTH = 12.4f;
 	private static final float CAMERA_HEIGHT = 7f;
-	private static final float RUNNING_FRAME_DURATION = 0.1f;
-	private static final float IDLE_FRAME_DURATION = 0.35f;
-	private static final float FIRING_FRAME_DURATION = 0.1f;
+	public static final float RUNNING_FRAME_DURATION = 0.1f;
+	public static final float IDLE_FRAME_DURATION = 0.35f;
+	public static final float FIRING_FRAME_DURATION = 0.2f;
+	public static final float FIRING_PRESSED_FRAME_DURATION = 0.1f;
+	public static final float DYING_FRAME_DURATION = 0.2f;
+	public static final float HIT_FRAME_DURATION = 0.2f;
 
 	private World world;
 	private OrthographicCamera cam;
@@ -48,6 +51,12 @@ public class WorldRenderer {
 	private Animation walkRightAnimation;
 	private Animation fireLeftAnimation;
 	private Animation fireRightAnimation;
+	private Animation firePressedLeftAnimation;
+	private Animation firePressedRightAnimation;
+	private Animation hitLeftAnimation;
+	private Animation hitRightAnimation;
+	private Animation dieLeftAnimation;
+	private Animation dieRightAnimation;
 
 	private SpriteBatch spriteBatch;
 	private BitmapFont font;
@@ -148,20 +157,62 @@ public class WorldRenderer {
 		walkRightAnimation = new Animation(RUNNING_FRAME_DURATION,
 				walkRightFrames);
 
-		TextureRegion[] fireLeftFrames = new TextureRegion[8];
-		for (int i = 0; i < 8; i++) {
-			fireLeftFrames[i] = atlas.findRegion("bob-attack-pressed-0"
-					+ (i + 1));
+		TextureRegion[] fireLeftFrames = new TextureRegion[3];
+		for (int i = 0; i < 3; i++) {
+			fireLeftFrames[i] = atlas.findRegion("bob-attack-0" + (i + 1));
 		}
 		fireLeftAnimation = new Animation(FIRING_FRAME_DURATION, fireLeftFrames);
 
-		TextureRegion[] fireRightFrames = new TextureRegion[8];
-		for (int i = 0; i < 8; i++) {
+		TextureRegion[] fireRightFrames = new TextureRegion[3];
+		for (int i = 0; i < 3; i++) {
 			fireRightFrames[i] = new TextureRegion(fireLeftFrames[i]);
 			fireRightFrames[i].flip(true, false);
 		}
 		fireRightAnimation = new Animation(FIRING_FRAME_DURATION,
 				fireRightFrames);
+
+		TextureRegion[] firePressedLeftFrames = new TextureRegion[8];
+		for (int i = 0; i < 8; i++) {
+			firePressedLeftFrames[i] = atlas.findRegion("bob-attack-pressed-0"
+					+ (i + 1));
+		}
+		firePressedLeftAnimation = new Animation(FIRING_PRESSED_FRAME_DURATION,
+				firePressedLeftFrames);
+
+		TextureRegion[] firePressedRightFrames = new TextureRegion[8];
+		for (int i = 0; i < 8; i++) {
+			firePressedRightFrames[i] = new TextureRegion(
+					firePressedLeftFrames[i]);
+			firePressedRightFrames[i].flip(true, false);
+		}
+		firePressedRightAnimation = new Animation(
+				FIRING_PRESSED_FRAME_DURATION, firePressedRightFrames);
+
+		TextureRegion[] hitLeftFrames = new TextureRegion[3];
+		for (int i = 0; i < 3; i++) {
+			hitLeftFrames[i] = atlas.findRegion("bob-hit-0" + (i + 1));
+		}
+		hitLeftAnimation = new Animation(HIT_FRAME_DURATION, hitLeftFrames);
+
+		TextureRegion[] hitRightFrames = new TextureRegion[3];
+		for (int i = 0; i < 3; i++) {
+			hitRightFrames[i] = new TextureRegion(hitLeftFrames[i]);
+			hitRightFrames[i].flip(true, false);
+		}
+		hitRightAnimation = new Animation(HIT_FRAME_DURATION, hitRightFrames);
+
+		TextureRegion[] dieLeftFrames = new TextureRegion[6];
+		for (int i = 0; i < 6; i++) {
+			dieLeftFrames[i] = atlas.findRegion("bob-die-0" + (i + 1));
+		}
+		dieLeftAnimation = new Animation(DYING_FRAME_DURATION, dieLeftFrames);
+
+		TextureRegion[] dieRightFrames = new TextureRegion[6];
+		for (int i = 0; i < 6; i++) {
+			dieRightFrames[i] = new TextureRegion(dieLeftFrames[i]);
+			dieRightFrames[i].flip(true, false);
+		}
+		dieRightAnimation = new Animation(DYING_FRAME_DURATION, dieRightFrames);
 
 		bobJumpLeft = atlas.findRegion("bob-jump");
 		bobJumpRight = new TextureRegion(bobJumpLeft);
@@ -211,7 +262,11 @@ public class WorldRenderer {
 	private void drawBob() {
 		Bob bob = world.getBob();
 
-		if (bob.getState().equals(State.IDLE)) {
+		if (bob.isHit()) {
+			bobFrame = bob.isFacingLeft() ? hitLeftAnimation.getKeyFrame(
+					bob.getStateTime(), false) : hitRightAnimation.getKeyFrame(
+					bob.getStateTime(), false);
+		} else if (bob.getState().equals(State.IDLE)) {
 			bobFrame = bob.isFacingLeft() ? idleLeftAnimation.getKeyFrame(
 					bob.getStateTime(), true) : idleRightAnimation.getKeyFrame(
 					bob.getStateTime(), true);
@@ -220,9 +275,21 @@ public class WorldRenderer {
 					bob.getStateTime(), true) : walkRightAnimation.getKeyFrame(
 					bob.getStateTime(), true);
 		} else if (bob.getState().equals(State.FIRING)) {
-			bobFrame = bob.isFacingLeft() ? fireLeftAnimation.getKeyFrame(
-					bob.getStateTime(), true) : fireRightAnimation.getKeyFrame(
-					bob.getStateTime(), true);
+			if (bob.getStateTime() <= FIRING_FRAME_DURATION * 3) {
+				bobFrame = bob.isFacingLeft() ? fireLeftAnimation.getKeyFrame(
+						bob.getStateTime(), false) : fireRightAnimation
+						.getKeyFrame(bob.getStateTime(), false);
+			} else {
+				bobFrame = bob.isFacingLeft() ? firePressedLeftAnimation
+						.getKeyFrame(bob.getStateTime() - FIRING_FRAME_DURATION
+								* 3, true) : firePressedRightAnimation
+						.getKeyFrame(bob.getStateTime() - FIRING_FRAME_DURATION
+								* 3, true);
+			}
+		} else if (bob.getState().equals(State.DYING)) {
+			bobFrame = bob.isFacingLeft() ? dieLeftAnimation.getKeyFrame(
+					bob.getStateTime(), false) : dieRightAnimation.getKeyFrame(
+					bob.getStateTime(), false);
 		} else if (bob.getState().equals(State.JUMPING)) {
 			bobFrame = bob.isFacingLeft() ? bobJumpLeft : bobJumpRight;
 		}

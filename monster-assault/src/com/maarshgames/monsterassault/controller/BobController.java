@@ -7,12 +7,13 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import com.maarshgames.monsterassault.MonsterAssault;
 import com.maarshgames.monsterassault.model.Ball;
 import com.maarshgames.monsterassault.model.Block;
 import com.maarshgames.monsterassault.model.Block.Type;
 import com.maarshgames.monsterassault.model.Bob;
-import com.maarshgames.monsterassault.model.World;
 import com.maarshgames.monsterassault.model.Bob.State;
+import com.maarshgames.monsterassault.model.World;
 import com.maarshgames.monsterassault.view.WorldRenderer;
 
 public class BobController {
@@ -28,12 +29,16 @@ public class BobController {
 	private static final float DAMP = 0.90f;
 	private static final float MAX_VEL = 4f;
 
+	private MonsterAssault game;
 	private World world;
 	private WorldRenderer renderer;
 	private Bob bob;
 	private long jumpPressedTime;
 	private boolean jumpingPressed;
+	private boolean fireLongPressed;
+	private boolean ballFired;
 	private boolean grounded = false;
+	private boolean inputDisabled = false;
 
 	private Vector2 camAcceleration;
 	private Vector2 camVelocity;
@@ -49,6 +54,14 @@ public class BobController {
 		}
 	};
 
+	// Ball pool
+	private Pool<Ball> ballPool = new Pool<Ball>() {
+		@Override
+		protected Ball newObject() {
+			return new Ball();
+		}
+	};
+
 	static Map<Keys, Boolean> keys = new HashMap<BobController.Keys, Boolean>();
 	static {
 		keys.put(Keys.LEFT, false);
@@ -60,7 +73,9 @@ public class BobController {
 	// Blocks that Bob can collide with any given frame
 	private Array<Block> collidable = new Array<Block>();
 
-	public BobController(World world, WorldRenderer renderer) {
+	public BobController(MonsterAssault game, World world,
+			WorldRenderer renderer) {
+		this.game = game;
 		this.world = world;
 		this.renderer = renderer;
 		this.bob = world.getBob();
@@ -101,16 +116,47 @@ public class BobController {
 
 	public void fireReleased() {
 		keys.get(keys.put(Keys.FIRE, false));
+		if (fireLongPressed) {
+			bob.setState(State.IDLE);
+		}
 	}
 
 	/** The main update method **/
 	public void update(float delta) {
+		// simply updates the state time
+		bob.update(delta);
+
+		// check if bob is dead
+		if (bob.getHitPoints() <= 0 && !bob.getState().equals(State.DYING)) {
+			bob.setState(State.DYING);
+			inputDisabled = true;
+		}
+
+		// If bob is dead, show game over screen
+		if (bob.getState().equals(State.DYING)
+				&& bob.getStateTime() >= WorldRenderer.DYING_FRAME_DURATION * 7) {
+			// game.setScreen(game.gameOverScreen);
+			return;
+		}
+
 		// Processing the input - setting the states of Bob
 		processInput();
 
 		// If Bob is grounded then reset the state to IDLE
 		if (grounded && bob.getState().equals(State.JUMPING)) {
 			bob.setState(State.IDLE);
+		}
+
+		if (bob.isHit()) {
+			// Disable input processing
+			inputDisabled = true;
+
+			// Stop movement if Bob is hit
+			bob.getAcceleration().x = 0;
+			if (bob.getStateTime() >= WorldRenderer.HIT_FRAME_DURATION * 3) {
+				bob.setHit(false);
+				inputDisabled = false;
+			}
 		}
 
 		// Setting initial vertical acceleration
@@ -138,9 +184,6 @@ public class BobController {
 		if (bob.getVelocity().x < -MAX_VEL) {
 			bob.getVelocity().x = -MAX_VEL;
 		}
-
-		// simply updates the state time
-		bob.update(delta);
 
 	}
 
@@ -281,60 +324,104 @@ public class BobController {
 
 	/** Change Bob's state and parameters based on input controls **/
 	private boolean processInput() {
-		if (keys.get(Keys.JUMP)) {
-			if (!bob.getState().equals(State.JUMPING)
-					&& !bob.getState().equals(State.FIRING)) {
-				jumpingPressed = true;
-				jumpPressedTime = System.currentTimeMillis();
-				bob.setState(State.JUMPING);
-				bob.getVelocity().y = MAX_JUMP_SPEED;
-				grounded = false;
-				// scrollUp = false;
-			} else {
-				if (jumpingPressed
-						&& ((System.currentTimeMillis() - jumpPressedTime) >= LONG_JUMP_PRESS)) {
-					jumpingPressed = false;
+		if (!inputDisabled) {
+			if (keys.get(Keys.JUMP)) {
+				if (!bob.getState().equals(State.JUMPING)
+						&& !bob.getState().equals(State.FIRING)) {
+					jumpingPressed = true;
+					jumpPressedTime = System.currentTimeMillis();
+					bob.setState(State.JUMPING);
+					bob.getVelocity().y = MAX_JUMP_SPEED;
+					grounded = false;
 				} else {
-					if (jumpingPressed) {
-						bob.getVelocity().y = MAX_JUMP_SPEED;
+					if (jumpingPressed
+							&& ((System.currentTimeMillis() - jumpPressedTime) >= LONG_JUMP_PRESS)) {
+						jumpingPressed = false;
+					} else {
+						if (jumpingPressed) {
+							bob.getVelocity().y = MAX_JUMP_SPEED;
+						}
+					}
+				}
+			}
+			if (keys.get(Keys.LEFT) && !bob.getState().equals(State.FIRING)) {
+				// left is pressed
+				bob.setFacingLeft(true);
+				if (!bob.getState().equals(State.JUMPING)
+						&& !bob.getState().equals(State.WALKING)) {
+					bob.setState(State.WALKING);
+				}
+				bob.getAcceleration().x = -ACCELERATION;
+			} else if (keys.get(Keys.RIGHT)
+					&& !bob.getState().equals(State.FIRING)) {
+				// left is pressed
+				bob.setFacingLeft(false);
+				if (!bob.getState().equals(State.JUMPING)
+						&& !bob.getState().equals(State.WALKING)) {
+					bob.setState(State.WALKING);
+				}
+				bob.getAcceleration().x = ACCELERATION;
+			} else if (keys.get(Keys.FIRE)
+					&& !bob.getState().equals(State.JUMPING)) {
+				// fire is pressed
+				if (!bob.getState().equals(State.FIRING)) {
+					bob.setState(State.FIRING);
+					ballFired = false;
+					fireLongPressed = false;
+				} else if (!fireLongPressed
+						&& bob.getStateTime() >= WorldRenderer.FIRING_FRAME_DURATION * 3) {
+					fireLongPressed = true;
+					ballFired = false;
+				}
+				bob.getAcceleration().x = 0;
+			} else {
+				if (!bob.getState().equals(State.JUMPING)
+						&& !bob.getState().equals(State.FIRING)
+						&& !bob.getState().equals(State.IDLE)) {
+					bob.setState(State.IDLE);
+				}
+				bob.getAcceleration().x = 0;
+
+			}
+			// Handle shooting
+			if (bob.getState().equals(State.FIRING)) {
+				if (!fireLongPressed) {
+					if (!ballFired
+							&& bob.getStateTime() >= WorldRenderer.FIRING_FRAME_DURATION) {
+						shootBall();
+						ballFired = true;
+					} else if (bob.getStateTime() > WorldRenderer.FIRING_FRAME_DURATION * 3) {
+						bob.setState(State.IDLE);
+					}
+				} else {
+					float stateTimeMod = (bob.getStateTime() - WorldRenderer.FIRING_FRAME_DURATION * 3)
+							% (WorldRenderer.FIRING_PRESSED_FRAME_DURATION * 8);
+					if ((stateTimeMod >= WorldRenderer.FIRING_PRESSED_FRAME_DURATION * 3 && stateTimeMod < WorldRenderer.FIRING_PRESSED_FRAME_DURATION * 4)
+							|| (stateTimeMod >= WorldRenderer.FIRING_PRESSED_FRAME_DURATION * 7 && stateTimeMod < WorldRenderer.FIRING_PRESSED_FRAME_DURATION * 8)) {
+						if (!ballFired) {
+							shootBall();
+							ballFired = true;
+						}
+					} else {
+						ballFired = false;
 					}
 				}
 			}
 		}
-		if (keys.get(Keys.LEFT) && !bob.getState().equals(State.FIRING)) {
-			// left is pressed
-			bob.setFacingLeft(true);
-			if (!bob.getState().equals(State.JUMPING)
-					&& !bob.getState().equals(State.WALKING)) {
-				bob.setState(State.WALKING);
-			}
-			bob.getAcceleration().x = -ACCELERATION;
-		} else if (keys.get(Keys.RIGHT) && !bob.getState().equals(State.FIRING)) {
-			// left is pressed
-			bob.setFacingLeft(false);
-			if (!bob.getState().equals(State.JUMPING)
-					&& !bob.getState().equals(State.WALKING)) {
-				bob.setState(State.WALKING);
-			}
-			bob.getAcceleration().x = ACCELERATION;
-		} else if (keys.get(Keys.FIRE)) {
-			// fire is pressed
-			if (!bob.getState().equals(State.JUMPING)
-					&& !bob.getState().equals(State.WALKING)
-					&& !bob.getState().equals(State.FIRING)) {
-				bob.setState(State.FIRING);
-				World.addBall(new Ball(new Vector2(bob.getPosition().x, bob
-						.getPosition().y+Bob.SIZE/4f), bob.isFacingLeft()));
-			}
-		} else {
-			if (!bob.getState().equals(State.JUMPING)
-					&& !bob.getState().equals(State.IDLE)) {
-				bob.setState(State.IDLE);
-			}
-			bob.getAcceleration().x = 0;
-
-		}
 		return false;
+	}
+
+	private void shootBall() {
+		// Obtain a ball from pool and add it to world
+		Ball ball = ballPool.obtain();
+		if (bob.isFacingLeft()) {
+			ball.setBall(bob.getPosition().x - Bob.SIZE / 2f,
+					bob.getPosition().y + Bob.SIZE / 4f, true);
+		} else {
+			ball.setBall(bob.getPosition().x + Bob.SIZE / 4f,
+					bob.getPosition().y + Bob.SIZE / 4f, false);
+		}
+		World.addBall(ball);
 	}
 
 }

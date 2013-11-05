@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
+import com.maarshgames.monsterassault.screens.GameOverScreen;
 import com.maarshgames.monsterassault.screens.GameScreen;
 import com.maarshgames.monsterassault.screens.LoadingScreen;
 import com.maarshgames.monsterassault.screens.MainMenuScreen;
@@ -17,6 +18,7 @@ public class MonsterAssault extends Game {
 	public MainMenuScreen mainMenuScreen;
 	public LoadingScreen loadingScreen;
 	public GameScreen gameScreen;
+	public GameOverScreen gameOverScreen;
 
 	@Override
 	public void create() {
@@ -36,6 +38,7 @@ public class MonsterAssault extends Game {
 		mainMenuScreen = new MainMenuScreen(this);
 		loadingScreen = new LoadingScreen(this);
 		gameScreen = new GameScreen(this);
+		gameOverScreen = new GameOverScreen(this);
 
 		// show splash-screen
 		setScreen(splashScreen);
