@@ -28,21 +28,19 @@ public class LoadingScreen implements Screen {
 
 	@Override
 	public void render(float delta) {
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
 		if (!assets.update()) {
 			progress = (int) (assets.getProgress() * 100);
 			spriteBatch.begin();
 			spriteBatch.draw(background, 0, 0, width, height);
-			font.draw(spriteBatch, "Loading",
-					width / 2f - font.getBounds("Loading").width / 2f,
-					height / 2f - 50);
 			font.draw(spriteBatch, progress + "%",
 					width / 2f - font.getBounds(progress + "%").width / 2f,
 					height / 2f - 80);
 			spriteBatch.end();
 		} else {
 			background = null;
-			assets.unload("images/loading.jpg");
 			spriteBatch.dispose();
 			game.setScreen(game.gameScreen);
 		}
@@ -61,9 +59,12 @@ public class LoadingScreen implements Screen {
 		width = Gdx.graphics.getWidth();
 		height = Gdx.graphics.getHeight();
 
+		assets.load("images/game-over.jpg", Texture.class);
 		assets.load("images/textures/BobAndMap.pack", TextureAtlas.class);
 		assets.load("images/textures/Justin.pack", TextureAtlas.class);
 		assets.load("levels/level-1.png", Pixmap.class);
+		assets.load("levels/level-2.png", Pixmap.class);
+		assets.load("levels/level-3.png", Pixmap.class);
 	}
 
 	@Override

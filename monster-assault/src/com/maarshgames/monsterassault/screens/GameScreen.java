@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.GL10;
 import com.maarshgames.monsterassault.MonsterAssault;
 import com.maarshgames.monsterassault.controller.BobController;
 import com.maarshgames.monsterassault.model.Ball;
+import com.maarshgames.monsterassault.model.Block.Type;
 import com.maarshgames.monsterassault.model.Enemy;
 import com.maarshgames.monsterassault.model.World;
 import com.maarshgames.monsterassault.view.WorldRenderer;
@@ -23,14 +24,23 @@ public class GameScreen implements Screen, InputProcessor {
 	private int width, height;
 
 	private int touchLeft, touchRight, touchFire, touchJump;
+	private int levelNumber = 1;
 
 	public GameScreen(MonsterAssault game) {
 		this.game = game;
 	}
 
+	public int getLevelNumber() {
+		return levelNumber;
+	}
+
+	public void setLevelNumber(int level) {
+		this.levelNumber = level;
+	}
+
 	@Override
 	public void show() {
-		world = new World();
+		world = new World(levelNumber);
 		renderer = new WorldRenderer(world, false);
 		controller = new BobController(game, world, renderer);
 		Gdx.input.setInputProcessor(this);
@@ -41,6 +51,9 @@ public class GameScreen implements Screen, InputProcessor {
 		Gdx.gl.glClearColor(0.48f, 0.83f, 0.9f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
+		if (World.enemiesLeft == 0) {
+			World.level.getDoor().setType(Type.DOOR_OPENED);
+		}
 		for (Enemy enemy : world.getEnemies()) {
 			enemy.update(delta);
 		}

@@ -49,6 +49,7 @@ public class Block {
 
 	public void setType(Type type) {
 		this.type = type;
+		this.texture = getTexture(type);
 	}
 
 	public TextureRegion getTexture() {
@@ -59,7 +60,7 @@ public class Block {
 		this.texture = texture;
 	}
 
-	public TextureRegion getTexture(Type blockType) {
+	public static TextureRegion getTexture(Type blockType) {
 		switch (blockType) {
 		case GRASS_LEFT:
 			return grassLeft;

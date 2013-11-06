@@ -12,6 +12,8 @@ import com.maarshgames.monsterassault.screens.SplashScreen;
 
 public class MonsterAssault extends Game {
 
+	public static final int NUMBER_OF_LEVELS = 3;
+
 	public static AssetManager assets;
 
 	public SplashScreen splashScreen;

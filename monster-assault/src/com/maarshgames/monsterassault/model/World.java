@@ -15,6 +15,7 @@ public class World {
 	public static Level level;
 
 	public static int score = 0;
+	public static int enemiesLeft;
 
 	public static Array<Enemy> enemies = new Array<Enemy>();
 
@@ -23,13 +24,14 @@ public class World {
 	/** The collision boxes **/
 	public Array<Rectangle> collisionRects = new Array<Rectangle>();
 
-	public World() {
-		createWorld();
+	public World(int levelNumber) {
+		createWorld(levelNumber);
 	}
 
-	private void createWorld() {
+	private void createWorld(int levelNumber) {
 
-		level = LevelLoader.loadLevel(1);
+		level = LevelLoader.loadLevel(levelNumber);
+		enemiesLeft = level.getNumberOfEnemies();
 		bob = new Bob(level.getSpawnPosition());
 	}
 
@@ -61,6 +63,7 @@ public class World {
 
 	public static void removeEnemy(Enemy enemy) {
 		enemies.removeValue(enemy, false);
+		enemiesLeft--;
 	}
 
 	public static void addBall(Ball ball) {
@@ -69,6 +72,12 @@ public class World {
 
 	public static void removeBall(Ball ball) {
 		balls.removeValue(ball, false);
+	}
+
+	public void clear() {
+		enemies.clear();
+		balls.clear();
+		score = 0;
 	}
 
 	/** Return only the blocks that need to be drawn **/

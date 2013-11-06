@@ -135,7 +135,7 @@ public class BobController {
 		// If bob is dead, show game over screen
 		if (bob.getState().equals(State.DYING)
 				&& bob.getStateTime() >= WorldRenderer.DYING_FRAME_DURATION * 7) {
-			// game.setScreen(game.gameOverScreen);
+			showGameOverScreen();
 			return;
 		}
 
@@ -187,6 +187,12 @@ public class BobController {
 
 	}
 
+	private void showGameOverScreen() {
+		game.gameOverScreen.setScore(World.score);
+		world.clear();
+		game.setScreen(game.gameOverScreen);
+	}
+
 	/** Collision checking **/
 	private void checkCollisionWithBlocks(float delta) {
 		// scale velocity to frame units
@@ -228,7 +234,7 @@ public class BobController {
 				continue;
 			if (bobRect.overlaps(block.getBounds())) {
 				if (block.getType().equals(Type.DOOR_OPENED)) {
-					// TODO Level completed
+					goToNextLevel();
 				}
 				bob.getVelocity().x = 0;
 				world.getCollisionRects().add(block.getBounds());
@@ -259,7 +265,7 @@ public class BobController {
 				continue;
 			if (bobRect.overlaps(block.getBounds())) {
 				if (block.getType().equals(Type.DOOR_OPENED)) {
-					// TODO Level completed
+					goToNextLevel();
 				}
 				if (bob.getVelocity().y < 0) {
 					grounded = true;
@@ -303,6 +309,18 @@ public class BobController {
 		// un-scale velocity (not in frame time)
 		bob.getVelocity().scl(1 / delta);
 
+	}
+
+	private void goToNextLevel() {
+		if (game.gameScreen.getLevelNumber() == MonsterAssault.NUMBER_OF_LEVELS) {
+			game.gameOverScreen.setScore(World.score);
+			world.clear();
+			game.setScreen(game.gameOverScreen);
+		} else {
+			game.gameScreen
+					.setLevelNumber(game.gameScreen.getLevelNumber() + 1);
+			game.setScreen(game.loadingScreen);
+		}
 	}
 
 	/**

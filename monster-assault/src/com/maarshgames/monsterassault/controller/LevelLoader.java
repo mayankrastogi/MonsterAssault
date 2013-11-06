@@ -81,12 +81,14 @@ public class LevelLoader {
 					case EXIT:
 						blocks[col][iRow] = new Block(new Vector2(col, iRow),
 								Type.DOOR_CLOSED);
+						level.setDoor(blocks[col][iRow]);
 						break;
 					// case CHECKPOINT:
 					// level.setCheckpointPosition(new Vector2(col, iRow));
 					// break;
 					case JUSTIN:
 						enemies[col][iRow] = new Justin(new Vector2(col, iRow));
+						level.setNumberOfEnemies(level.getNumberOfEnemies() + 1);
 						break;
 					// case ENEMY_2:
 					// level.setEnemySpawnPosition(new Vector2(col, iRow),
