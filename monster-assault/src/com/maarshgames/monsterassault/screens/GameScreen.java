@@ -122,8 +122,10 @@ public class GameScreen implements Screen, InputProcessor {
 			controller.jumpReleased();
 		if (keycode == Keys.X)
 			controller.fireReleased();
-		if (keycode == Keys.BACK)
+		if (keycode == Keys.BACK || keycode == Keys.ESCAPE) {
+			world.clear();
 			game.setScreen(game.mainMenuScreen);
+		}
 		return true;
 	}
 

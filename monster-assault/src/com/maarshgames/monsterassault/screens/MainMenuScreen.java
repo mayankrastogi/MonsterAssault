@@ -70,7 +70,7 @@ public class MainMenuScreen implements Screen, InputProcessor {
 		playButton = new Rectangle(width / 2f - playButtonWidth / 2f,
 				height / 2f - 50f, playButtonWidth, playButtonHeight);
 		exitButton = new Rectangle(width / 2f - exitButtonWidth / 2f,
-				height / 2f - 100f, exitButtonWidth, exitButtonHeight);
+				height / 2f - 125f, exitButtonWidth, exitButtonHeight);
 	}
 
 	@Override
@@ -123,8 +123,12 @@ public class MainMenuScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		// TODO handle button touch events
-		game.setScreen(game.loadingScreen);
+		if (playButton.contains(screenX, height - screenY + playButton.height)) {
+			game.setScreen(game.loadingScreen);
+		} else if (exitButton.contains(screenX, height - screenY
+				+ exitButton.height)) {
+			Gdx.app.exit();
+		}
 		return true;
 	}
 
