@@ -2,6 +2,7 @@ package com.maarshgames.monsterassault.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -59,12 +60,32 @@ public class LoadingScreen implements Screen {
 		width = Gdx.graphics.getWidth();
 		height = Gdx.graphics.getHeight();
 
+		// Load backgrounds
 		assets.load("images/game-over.jpg", Texture.class);
+
+		// Load textures
 		assets.load("images/textures/BobAndMap.pack", TextureAtlas.class);
 		assets.load("images/textures/Justin.pack", TextureAtlas.class);
+
+		// Load level-maps
 		assets.load("levels/level-1.png", Pixmap.class);
 		assets.load("levels/level-2.png", Pixmap.class);
 		assets.load("levels/level-3.png", Pixmap.class);
+
+		// Load sounds
+		assets.load("sounds/ball-hit.wav", Sound.class);
+		assets.load("sounds/ball-launched.wav", Sound.class);
+		assets.load("sounds/bob-die.wav", Sound.class);
+		assets.load("sounds/bob-hit.wav", Sound.class);
+		assets.load("sounds/bob-jump.wav", Sound.class);
+		assets.load("sounds/bob-land.wav", Sound.class);
+		assets.load("sounds/bob-shoot.wav", Sound.class);
+		assets.load("sounds/bob-shoot-pressed.wav", Sound.class);
+		assets.load("sounds/justin-hit.wav", Sound.class);
+		assets.load("sounds/justin-die.wav", Sound.class);
+		assets.load("sounds/door-opened.wav", Sound.class);
+		assets.load("sounds/level-change.wav", Sound.class);
+		assets.load("sounds/game-over.wav", Sound.class);
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package com.maarshgames.monsterassault.model;
 
 import static com.maarshgames.monsterassault.MonsterAssault.assets;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -42,6 +43,9 @@ public class Justin extends Enemy {
 	private static Animation hitRightAnimation;
 	private static Animation dieLeftAnimation;
 	private static Animation dieRightAnimation;
+	
+	private static Sound justinHitSound;
+	private static Sound justinDieSound;
 
 	private boolean grounded;
 	private boolean initialUpdate = true;
@@ -53,6 +57,9 @@ public class Justin extends Enemy {
 		this.bounds.height = SIZE;
 		if (atlas == null) {
 			loadTextures();
+			// Load sounds
+			justinHitSound = assets.get("sounds/justin-hit.wav", Sound.class);
+			justinDieSound = assets.get("sounds/justin-die.wav", Sound.class);
 		}
 		this.enemyFrame = idleLeftAnimation.getKeyFrame(stateTime, true);
 	}
@@ -164,6 +171,8 @@ public class Justin extends Enemy {
 			// check if enemy enemy is dead
 			if (hitPoints <= 0 && !state.equals(EnemyState.DYING)) {
 				setState(EnemyState.DYING);
+				// Play dying sound
+				justinDieSound.play();
 			}
 
 			// If enemy is dead, remove him and update score
@@ -336,6 +345,8 @@ public class Justin extends Enemy {
 			stateTime = 0;
 			World.score += (hitPoints > damage) ? damage : hitPoints;
 			hitPoints -= damage;
+			// Play hit sound
+			justinHitSound.play();
 		}
 	}
 }

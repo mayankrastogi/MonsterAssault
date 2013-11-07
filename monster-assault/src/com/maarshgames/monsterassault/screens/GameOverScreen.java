@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -59,6 +60,9 @@ public class GameOverScreen implements Screen, InputProcessor {
 		spriteBatch = new SpriteBatch();
 
 		font = assets.get("fonts/villa.fnt", BitmapFont.class);
+		
+		// Play game-over sound
+		assets.get("sounds/game-over.wav", Sound.class).play();
 
 		Gdx.input.setInputProcessor(this);
 	}

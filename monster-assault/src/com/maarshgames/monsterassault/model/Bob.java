@@ -133,6 +133,8 @@ public class Bob {
 			stateTime = 0;
 			hitPoints -= damage;
 			Gdx.input.vibrate(BobController.BOB_HIT_VIBRATION_DURATION);
+			// Play hit sound
+			BobController.bobHitSound.play();
 		}
 	}
 }

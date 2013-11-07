@@ -2,6 +2,7 @@ package com.maarshgames.monsterassault.model;
 
 import static com.maarshgames.monsterassault.MonsterAssault.assets;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -41,6 +42,9 @@ public class Ball {
 	private static Animation movingRightAnimation;
 	private static Animation hitLeftAnimation;
 	private static Animation hitRightAnimation;
+	
+	public static Sound ballLaunchedSound;
+	public static Sound ballHitSound;
 
 	private Array<Block> collidable = new Array<Block>();
 
@@ -73,6 +77,9 @@ public class Ball {
 		this.bounds = new Rectangle(0, 0, SIZE, SIZE * 0.6f);
 		if (atlas == null) {
 			loadTextures();
+			// Load Sounds
+			ballLaunchedSound = assets.get("sounds/ball-launched.wav", Sound.class);
+			ballHitSound = assets.get("sounds/ball-hit.wav", Sound.class);
 		}
 	}
 
@@ -179,6 +186,8 @@ public class Ball {
 					enemy.hit(World.bob.getDamage());
 					velocity.x = 0;
 					setState(BallState.HIT);
+					// Play ball hit sound
+					ballHitSound.play();
 				}
 			}
 			// ensure terminal velocity is not exceeded
@@ -228,6 +237,8 @@ public class Ball {
 			if (ballRect.overlaps(block.getBounds())) {
 				velocity.x = 0;
 				setState(BallState.HIT);
+				// Play ball hit sound
+				ballHitSound.play();
 				break;
 			}
 		}

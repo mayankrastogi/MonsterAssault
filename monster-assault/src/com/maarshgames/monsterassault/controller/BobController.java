@@ -1,9 +1,12 @@
 package com.maarshgames.monsterassault.controller;
 
+import static com.maarshgames.monsterassault.MonsterAssault.assets;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -44,6 +47,14 @@ public class BobController {
 	private boolean ballFired;
 	private boolean grounded = false;
 	private boolean inputDisabled = false;
+
+	public static Sound bobDieSound;
+	public static Sound bobHitSound;
+	public static Sound bobJumpSound;
+	public static Sound bobLandSound;
+	public static Sound bobShootSound;
+	public static Sound bobShootPressedSound;
+	public static Sound levelChangeSound;
 
 	private Vector2 camAcceleration;
 	private Vector2 camVelocity;
@@ -86,6 +97,15 @@ public class BobController {
 		this.bob = world.getBob();
 		this.camAcceleration = new Vector2(0, ACCELERATION);
 		this.camVelocity = new Vector2();
+
+		bobDieSound = assets.get("sounds/bob-die.wav", Sound.class);
+		bobHitSound = assets.get("sounds/bob-hit.wav", Sound.class);
+		bobJumpSound = assets.get("sounds/bob-jump.wav", Sound.class);
+		bobLandSound = assets.get("sounds/bob-land.wav", Sound.class);
+		bobShootSound = assets.get("sounds/bob-shoot.wav", Sound.class);
+		bobShootPressedSound = assets.get("sounds/bob-shoot-pressed.wav",
+				Sound.class);
+		levelChangeSound = assets.get("sounds/level-change.wav", Sound.class);
 	}
 
 	// ** Key presses and touches **************** //
@@ -136,6 +156,8 @@ public class BobController {
 			bob.setState(State.DYING);
 			Gdx.input.vibrate(BOB_DIE_VIBRATION_DURATION);
 			inputDisabled = true;
+			// Play Bob die sound
+			bobDieSound.play();
 		}
 
 		// If bob is dead, show game over screen
@@ -275,10 +297,15 @@ public class BobController {
 					goToNextLevel();
 				}
 				if (bob.getVelocity().y < 0) {
-					grounded = true;
-					scrollUp = true;
-					scrollTo = bob.getPosition().y;
-					camVelocity.set(0, MAX_JUMP_SPEED);
+					if (!grounded) {
+						grounded = true;
+						scrollUp = true;
+						scrollTo = bob.getPosition().y;
+						camVelocity.set(0, MAX_JUMP_SPEED);
+
+						// Play sound when bob hits ground
+						bobLandSound.play();
+					}
 				}
 				bob.getVelocity().y = 0;
 				world.getCollisionRects().add(block.getBounds());
@@ -330,6 +357,8 @@ public class BobController {
 			World.score += 100;
 			game.setScreen(game.loadingScreen);
 		}
+		// Play level change sound and vibrate
+		levelChangeSound.play();
 		Gdx.input.vibrate(LEVEL_CHANGE_VIBRATION_DURATION);
 	}
 
@@ -361,6 +390,8 @@ public class BobController {
 					bob.setState(State.JUMPING);
 					bob.getVelocity().y = MAX_JUMP_SPEED;
 					grounded = false;
+					// Play jumping sound
+					bobJumpSound.play();
 				} else {
 					if (jumpingPressed
 							&& ((System.currentTimeMillis() - jumpPressedTime) >= LONG_JUMP_PRESS)) {
@@ -396,6 +427,8 @@ public class BobController {
 					bob.setState(State.FIRING);
 					ballFired = false;
 					fireLongPressed = false;
+					// Play Bob shoot sound
+					bobShootSound.play();
 				} else if (!fireLongPressed
 						&& bob.getStateTime() >= WorldRenderer.FIRING_FRAME_DURATION * 3) {
 					fireLongPressed = true;
@@ -429,6 +462,8 @@ public class BobController {
 						if (!ballFired) {
 							shootBall();
 							ballFired = true;
+							// Play Bob shoot pressed sound
+							bobShootPressedSound.play();
 						}
 					} else {
 						ballFired = false;
@@ -450,6 +485,8 @@ public class BobController {
 					bob.getPosition().y + Bob.SIZE / 4f, false);
 		}
 		World.addBall(ball);
+		// Play ball launched sound
+		Ball.ballLaunchedSound.play();
 	}
 
 }

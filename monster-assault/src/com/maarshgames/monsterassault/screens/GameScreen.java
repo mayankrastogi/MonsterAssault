@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -37,6 +38,7 @@ public class GameScreen implements Screen, InputProcessor {
 	private World world;
 	private WorldRenderer renderer;
 	private BobController controller;
+	private Sound doorOpenedSound;
 
 	private OrthographicCamera guiCam;
 	private ShapeRenderer shapeRenderer;
@@ -63,6 +65,7 @@ public class GameScreen implements Screen, InputProcessor {
 	@Override
 	public void show() {
 		font = assets.get("fonts/villa.fnt", BitmapFont.class);
+		doorOpenedSound = assets.get("sounds/door-opened.wav", Sound.class);
 		shapeRenderer = new ShapeRenderer();
 		spriteBatch = new SpriteBatch();
 
@@ -79,8 +82,12 @@ public class GameScreen implements Screen, InputProcessor {
 		Gdx.gl.glClearColor(0.48f, 0.83f, 0.9f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
-		if (World.enemiesLeft == 0) {
+		// If all enemies are dead, open the exit door
+		if (World.enemiesLeft == 0
+				&& World.level.getDoor().getType().equals(Type.DOOR_CLOSED)) {
 			World.level.getDoor().setType(Type.DOOR_OPENED);
+			// Play door-opened sound
+			doorOpenedSound.play();
 		}
 		for (Enemy enemy : world.getEnemies()) {
 			enemy.update(delta);
