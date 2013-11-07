@@ -1,7 +1,9 @@
 package com.maarshgames.monsterassault.model;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.maarshgames.monsterassault.controller.BobController;
 import com.maarshgames.monsterassault.model.Enemy.EnemyState;
 
 public class Bob {
@@ -130,6 +132,7 @@ public class Bob {
 			hit = true;
 			stateTime = 0;
 			hitPoints -= damage;
+			Gdx.input.vibrate(BobController.BOB_HIT_VIBRATION_DURATION);
 		}
 	}
 }

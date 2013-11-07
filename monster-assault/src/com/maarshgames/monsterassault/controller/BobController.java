@@ -3,6 +3,7 @@ package com.maarshgames.monsterassault.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -28,6 +29,10 @@ public class BobController {
 	private static final float MAX_JUMP_SPEED = 5.3f;
 	private static final float DAMP = 0.90f;
 	private static final float MAX_VEL = 4f;
+
+	public static final int BOB_HIT_VIBRATION_DURATION = 200;
+	public static final int LEVEL_CHANGE_VIBRATION_DURATION = 200;
+	public static final int BOB_DIE_VIBRATION_DURATION = 500;
 
 	private MonsterAssault game;
 	private World world;
@@ -129,6 +134,7 @@ public class BobController {
 		// check if bob is dead
 		if (bob.getHitPoints() <= 0 && !bob.getState().equals(State.DYING)) {
 			bob.setState(State.DYING);
+			Gdx.input.vibrate(BOB_DIE_VIBRATION_DURATION);
 			inputDisabled = true;
 		}
 
@@ -190,6 +196,7 @@ public class BobController {
 	private void showGameOverScreen() {
 		game.gameOverScreen.setScore(World.score);
 		world.clear();
+		game.gameScreen.setLevelNumber(1);
 		game.setScreen(game.gameOverScreen);
 	}
 
@@ -313,14 +320,13 @@ public class BobController {
 
 	private void goToNextLevel() {
 		if (game.gameScreen.getLevelNumber() == MonsterAssault.NUMBER_OF_LEVELS) {
-			game.gameOverScreen.setScore(World.score);
-			world.clear();
-			game.setScreen(game.gameOverScreen);
+			showGameOverScreen();
 		} else {
 			game.gameScreen
 					.setLevelNumber(game.gameScreen.getLevelNumber() + 1);
 			game.setScreen(game.loadingScreen);
 		}
+		Gdx.input.vibrate(LEVEL_CHANGE_VIBRATION_DURATION);
 	}
 
 	/**

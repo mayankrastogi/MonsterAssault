@@ -16,6 +16,8 @@ import com.maarshgames.monsterassault.view.WorldRenderer;
 
 public class GameScreen implements Screen, InputProcessor {
 
+	private static final float ACCELEROMETER_THRESHOLD = 0.8f;
+
 	private MonsterAssault game;
 	private World world;
 	private WorldRenderer renderer;
@@ -23,7 +25,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	private int width, height;
 
-	private int touchLeft, touchRight, touchFire, touchJump;
+	private int touchFire, touchJump;
 	private int levelNumber = 1;
 
 	public GameScreen(MonsterAssault game) {
@@ -60,19 +62,36 @@ public class GameScreen implements Screen, InputProcessor {
 		for (Ball ball : world.getBalls()) {
 			ball.update(delta);
 		}
+		processAccelerometerInput();
 		controller.update(delta);
 		renderer.render();
 	}
 
+	private void processAccelerometerInput() {
+		if (!Gdx.app.getType().equals(ApplicationType.Android))
+			return;
+
+		float y = Gdx.input.getAccelerometerY();
+		if (Math.abs(y) > ACCELEROMETER_THRESHOLD) {
+			if (y < 0) {
+				controller.rightReleased();
+				controller.leftPressed();
+			} else {
+				controller.leftReleased();
+				controller.rightPressed();
+			}
+		} else {
+			controller.leftReleased();
+			controller.rightReleased();
+		}
+	}
+
 	@Override
 	public void resize(int width, int height) {
-		// renderer.setSize(width, height);
 		this.width = width;
 		this.height = height;
-		this.touchLeft = width / 8;
-		this.touchRight = width / 4;
-		this.touchFire = (6 * width) / 8;
-		this.touchJump = (7 * width) / 8;
+		this.touchFire = width / 4;
+		this.touchJump = (3 * width) / 4;
 	}
 
 	@Override
@@ -82,12 +101,12 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
+		Gdx.input.setInputProcessor(null);
 	}
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
+		Gdx.input.setInputProcessor(this);
 	}
 
 	@Override
@@ -123,6 +142,7 @@ public class GameScreen implements Screen, InputProcessor {
 		if (keycode == Keys.X)
 			controller.fireReleased();
 		if (keycode == Keys.BACK || keycode == Keys.ESCAPE) {
+			levelNumber = 1;
 			world.clear();
 			game.setScreen(game.mainMenuScreen);
 		}
@@ -139,15 +159,8 @@ public class GameScreen implements Screen, InputProcessor {
 	public boolean touchDown(int x, int y, int pointer, int button) {
 		if (!Gdx.app.getType().equals(ApplicationType.Android))
 			return false;
-		if (x < touchLeft) {
-			controller.rightReleased();
-			controller.leftPressed();
-		}
-		if (x > touchLeft && x < touchRight) {
-			controller.leftReleased();
-			controller.rightPressed();
-		}
-		if (x > touchFire && x < touchJump) {
+
+		if (x < touchFire) {
 			controller.firePressed();
 		}
 		if (x > touchJump) {
@@ -160,13 +173,7 @@ public class GameScreen implements Screen, InputProcessor {
 	public boolean touchUp(int x, int y, int pointer, int button) {
 		if (!Gdx.app.getType().equals(ApplicationType.Android))
 			return false;
-		if (x < touchLeft) {
-			controller.leftReleased();
-		}
-		if (x > touchLeft && x < touchRight) {
-			controller.rightReleased();
-		}
-		if (x > touchFire && x < touchJump) {
+		if (x < touchFire) {
 			controller.fireReleased();
 		}
 		if (x > touchJump) {
