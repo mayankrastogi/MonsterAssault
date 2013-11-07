@@ -8,7 +8,6 @@ import java.util.List;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -26,6 +25,7 @@ public class WorldRenderer {
 
 	private static final float CAMERA_WIDTH = 12.4f;
 	private static final float CAMERA_HEIGHT = 7f;
+
 	public static final float RUNNING_FRAME_DURATION = 0.1f;
 	public static final float IDLE_FRAME_DURATION = 0.35f;
 	public static final float FIRING_FRAME_DURATION = 0.2f;
@@ -59,21 +59,9 @@ public class WorldRenderer {
 	private Animation dieRightAnimation;
 
 	private SpriteBatch spriteBatch;
-	private BitmapFont font;
 	private boolean debug = false;
-	// private int width;
-	// private int height;
-	// private float ppuX; // pixels per unit on the X axis
-	// private float ppuY; // pixels per unit on the Y axis
 	private float camX;
 	private float camY;
-
-	// public void setSize(int w, int h) {
-	// this.width = w;
-	// this.height = h;
-	// // ppuX = (float) width / CAMERA_WIDTH;
-	// // ppuY = (float) height / CAMERA_HEIGHT;
-	// }
 
 	public boolean isDebug() {
 		return debug;
@@ -115,11 +103,9 @@ public class WorldRenderer {
 		this.camX = world.getBob().getPosition().x;
 		this.camY = world.getBob().getPosition().y;
 		this.cam.position.set(camX, camY, 0);
-		// this.cam.position.set(CAMERA_WIDTH / 2f, CAMERA_HEIGHT / 2f, 0);
 		this.cam.update();
 		this.debug = debug;
 		spriteBatch = new SpriteBatch();
-		font = assets.get("fonts/villa.fnt", BitmapFont.class);
 		loadTextures();
 	}
 
@@ -225,7 +211,6 @@ public class WorldRenderer {
 		drawBlocksAndEnemies();
 		drawBalls();
 		drawBob();
-		drawScore();
 		spriteBatch.end();
 
 		if (debug) {
@@ -239,9 +224,6 @@ public class WorldRenderer {
 		world.populateDrawableItems((int) CAMERA_WIDTH, (int) CAMERA_HEIGHT,
 				blocks);
 		for (Block block : blocks) {
-			// spriteBatch.draw(blockTexture, block.getPosition().x * ppuX,
-			// block.getPosition().y * ppuY, Block.SIZE * ppuX, Block.SIZE *
-			// ppuY);
 			spriteBatch.draw(block.getTexture(), block.getPosition().x,
 					block.getPosition().y, Block.SIZE, Block.SIZE);
 		}
@@ -293,14 +275,8 @@ public class WorldRenderer {
 		} else if (bob.getState().equals(State.JUMPING)) {
 			bobFrame = bob.isFacingLeft() ? bobJumpLeft : bobJumpRight;
 		}
-		// spriteBatch.draw(bobFrame, bob.getPosition().x * ppuX,
-		// bob.getPosition().y * ppuY, Bob.SIZE * ppuX, Bob.SIZE * ppuY);
 		spriteBatch.draw(bobFrame, bob.getPosition().x - Bob.SIZE / 4f,
 				bob.getPosition().y, Bob.SIZE, Bob.SIZE * 1.1f);
-	}
-
-	private void drawScore() {
-		// TODO render score
 	}
 
 	private void drawDebug() {

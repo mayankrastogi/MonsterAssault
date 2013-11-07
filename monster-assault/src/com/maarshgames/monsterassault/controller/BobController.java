@@ -320,10 +320,14 @@ public class BobController {
 
 	private void goToNextLevel() {
 		if (game.gameScreen.getLevelNumber() == MonsterAssault.NUMBER_OF_LEVELS) {
+			// Bonus score on game-completion
+			World.score += 500;
 			showGameOverScreen();
 		} else {
 			game.gameScreen
 					.setLevelNumber(game.gameScreen.getLevelNumber() + 1);
+			// Bonus score on level-completion
+			World.score += 100;
 			game.setScreen(game.loadingScreen);
 		}
 		Gdx.input.vibrate(LEVEL_CHANGE_VIBRATION_DURATION);
