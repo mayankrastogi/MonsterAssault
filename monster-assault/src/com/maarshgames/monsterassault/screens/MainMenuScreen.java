@@ -67,10 +67,10 @@ public class MainMenuScreen implements Screen, InputProcessor {
 		float playButtonHeight = font.getBounds("Play").height;
 		float exitButtonHeight = font.getBounds("Exit").height;
 
-		playButton = new Rectangle(width / 2f - playButtonWidth / 2f,
-				height / 2f - 50f, playButtonWidth, playButtonHeight);
-		exitButton = new Rectangle(width / 2f - exitButtonWidth / 2f,
-				height / 2f - 125f, exitButtonWidth, exitButtonHeight);
+		playButton = new Rectangle(width / 2f - playButtonWidth / 2f, height
+				/ 2f - 0.1f * height, playButtonWidth, playButtonHeight);
+		exitButton = new Rectangle(width / 2f - exitButtonWidth / 2f, height
+				/ 2f - 0.26f * height, exitButtonWidth, exitButtonHeight);
 	}
 
 	@Override
@@ -95,18 +95,18 @@ public class MainMenuScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean keyDown(int keycode) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean keyUp(int keycode) {
 		if (keycode == Keys.BACK) {
 			Gdx.app.exit();
 		} else if (keycode == Keys.ENTER) {
 			game.setScreen(game.loadingScreen);
 		}
 		return true;
+	}
+
+	@Override
+	public boolean keyUp(int keycode) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override
@@ -123,10 +123,11 @@ public class MainMenuScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if (playButton.contains(screenX, height - screenY + playButton.height)) {
+		if (playButton.contains(screenX, height - screenY + 1.5f
+				* playButton.height)) {
 			game.setScreen(game.loadingScreen);
-		} else if (exitButton.contains(screenX, height - screenY
-				+ exitButton.height)) {
+		} else if (exitButton.contains(screenX, height - screenY + 1.5f
+				* exitButton.height)) {
 			Gdx.app.exit();
 		}
 		return true;

@@ -82,42 +82,42 @@ bob-attack-pressed-08
   index: -1
 bob-ball-01
   rotate: false
-  xy: 730, 451
+  xy: 802, 451
   size: 82, 47
   orig: 82, 47
   offset: 0, 0
   index: -1
 bob-ball-02
   rotate: false
-  xy: 814, 451
+  xy: 886, 451
   size: 82, 47
   orig: 82, 47
   offset: 0, 0
   index: -1
 bob-ball-03
   rotate: false
-  xy: 898, 451
+  xy: 802, 402
   size: 82, 47
   orig: 82, 47
   offset: 0, 0
   index: -1
 bob-ball-04
   rotate: false
-  xy: 730, 402
+  xy: 886, 402
   size: 82, 47
   orig: 82, 47
   offset: 0, 0
   index: -1
 bob-ball-05
   rotate: false
-  xy: 814, 402
+  xy: 658, 379
   size: 82, 47
   orig: 82, 47
   offset: 0, 0
   index: -1
 bob-ball-06
   rotate: false
-  xy: 898, 402
+  xy: 648, 330
   size: 82, 47
   orig: 82, 47
   offset: 0, 0
@@ -131,7 +131,7 @@ bob-ball-07
   index: -1
 bob-ball-08
   rotate: false
-  xy: 320, 2
+  xy: 322, 2
   size: 82, 47
   orig: 82, 47
   offset: 0, 0
@@ -204,6 +204,13 @@ bob-duck-02
   xy: 166, 172
   size: 80, 80
   orig: 80, 80
+  offset: 0, 0
+  index: -1
+bob-face
+  rotate: false
+  xy: 248, 16
+  size: 72, 72
+  orig: 72, 72
   offset: 0, 0
   index: -1
 bob-hit-01
@@ -362,42 +369,42 @@ bob-run-03
   index: -1
 door-closed
   rotate: false
-  xy: 248, 18
+  xy: 330, 100
   size: 70, 70
   orig: 70, 70
   offset: 0, 0
   index: -1
 door-opened
   rotate: false
-  xy: 330, 100
+  xy: 412, 182
   size: 70, 70
   orig: 70, 70
   offset: 0, 0
   index: -1
 grassCenter
   rotate: false
-  xy: 412, 182
+  xy: 494, 264
   size: 70, 70
   orig: 70, 70
   offset: 0, 0
   index: -1
 grassLeft
   rotate: false
-  xy: 494, 264
+  xy: 576, 346
   size: 70, 70
   orig: 70, 70
   offset: 0, 0
   index: -1
 grassMid
   rotate: false
-  xy: 576, 346
+  xy: 658, 428
   size: 70, 70
   orig: 70, 70
   offset: 0, 0
   index: -1
 grassRight
   rotate: false
-  xy: 658, 428
+  xy: 730, 428
   size: 70, 70
   orig: 70, 70
   offset: 0, 0

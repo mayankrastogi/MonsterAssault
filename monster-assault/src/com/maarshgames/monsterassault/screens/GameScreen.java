@@ -1,5 +1,7 @@
 package com.maarshgames.monsterassault.screens;
 
+import static com.maarshgames.monsterassault.MonsterAssault.assets;
+
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -7,46 +9,29 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.maarshgames.monsterassault.MonsterAssault;
 import com.maarshgames.monsterassault.controller.BobController;
 import com.maarshgames.monsterassault.model.Ball;
 import com.maarshgames.monsterassault.model.Block.Type;
-import com.maarshgames.monsterassault.model.Bob;
 import com.maarshgames.monsterassault.model.Enemy;
 import com.maarshgames.monsterassault.model.World;
+import com.maarshgames.monsterassault.view.GuiRenderer;
 import com.maarshgames.monsterassault.view.WorldRenderer;
-
-import static com.maarshgames.monsterassault.MonsterAssault.assets;
 
 public class GameScreen implements Screen, InputProcessor {
 
-	private static final float GUI_CAM_WIDTH = 848f;
-	private static final float GUI_CAM_HEIGHT = 480f;
 	private static final float ACCELEROMETER_THRESHOLD = 0.8f;
-	private static final float HEALTH_BAR_WIDTH = 250f;
-	private static final float HEALTH_BAR_HEIGHT = 15f;
-
-	private static final float BAR_UNIT_WIDTH = HEALTH_BAR_WIDTH
-			/ Bob.HIT_POINTS;
 
 	private MonsterAssault game;
 	private World world;
-	private WorldRenderer renderer;
+	private WorldRenderer worldRenderer;
+	private GuiRenderer guiRenderer;
 	private BobController controller;
 	private Sound doorOpenedSound;
 
-	private OrthographicCamera guiCam;
-	private ShapeRenderer shapeRenderer;
-	private SpriteBatch spriteBatch;
-	private BitmapFont font;
-
 	private int touchFire, touchJump;
 	private int levelNumber = 1;
+	private boolean paused = false;
 
 	public GameScreen(MonsterAssault game) {
 		this.game = game;
@@ -62,16 +47,12 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public void show() {
-		font = assets.get("fonts/villa.fnt", BitmapFont.class);
 		doorOpenedSound = assets.get("sounds/door-opened.wav", Sound.class);
-		shapeRenderer = new ShapeRenderer();
-		spriteBatch = new SpriteBatch();
 
 		world = new World(levelNumber);
-		renderer = new WorldRenderer(world, false);
-		controller = new BobController(game, world, renderer);
-		guiCam = new OrthographicCamera(GUI_CAM_WIDTH, GUI_CAM_HEIGHT);
-		guiCam.update();
+		worldRenderer = new WorldRenderer(world, false);
+		guiRenderer = new GuiRenderer(world);
+		controller = new BobController(game, world, worldRenderer);
 		Gdx.input.setInputProcessor(this);
 	}
 
@@ -80,57 +61,43 @@ public class GameScreen implements Screen, InputProcessor {
 		Gdx.gl.glClearColor(0.48f, 0.83f, 0.9f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
-		// Restrict max. value of delta to 1/60 of a second so that Bob doesn't
-		// fall off
+		// Restrict max. value of delta to 1/60 of a second so that Bob
+		// doesn't fall off
 		delta = Math.min(delta, 1f / 60f);
 
-		// If all enemies are dead, open the exit door
-		if (World.enemiesLeft == 0
-				&& World.level.getDoor().getType().equals(Type.DOOR_CLOSED)) {
-			World.level.getDoor().setType(Type.DOOR_OPENED);
-			// Play door-opened sound
-			doorOpenedSound.play();
+		// If game is not paused, update world objects
+		if (!paused) {
+			// If all enemies are dead, open the exit door
+			if (World.enemiesLeft == 0
+					&& World.level.getDoor().getType().equals(Type.DOOR_CLOSED)) {
+				World.level.getDoor().setType(Type.DOOR_OPENED);
+				// Play door-opened sound
+				doorOpenedSound.play();
+			}
+			for (Enemy enemy : world.getEnemies()) {
+				enemy.update(delta);
+			}
+			for (Ball ball : world.getBalls()) {
+				ball.update(delta);
+			}
+			processAccelerometerInput();
+			controller.update(delta);
+		} else {
+			if (Gdx.input.justTouched()) {
+				// if screen is touched while paused, resume the game
+				Gdx.input.setInputProcessor(this);
+				paused = false;
+			} else if (Gdx.input.isKeyPressed(Keys.BACK)
+					|| Gdx.input.isKeyPressed(Keys.ESCAPE)) {
+				// if back key is pressed exit to main menu
+				levelNumber = 1;
+				world.clear();
+				paused = false;
+				game.setScreen(game.mainMenuScreen);
+			}
 		}
-		for (Enemy enemy : world.getEnemies()) {
-			enemy.update(delta);
-		}
-		for (Ball ball : world.getBalls()) {
-			ball.update(delta);
-		}
-		processAccelerometerInput();
-		controller.update(delta);
-		renderer.render();
-
-		// Draw HUD
-		drawHealthBar();
-		drawScore();
-	}
-
-	private void drawHealthBar() {
-		shapeRenderer.setProjectionMatrix(guiCam.combined);
-
-		float x = guiCam.position.x - (GUI_CAM_WIDTH / 2) + 25;
-		float y = guiCam.position.y + (GUI_CAM_HEIGHT / 2) - 25f;
-		int bobHP = world.getBob().getHitPoints();
-		float barWidth = (bobHP > 0) ? BAR_UNIT_WIDTH * bobHP : BAR_UNIT_WIDTH;
-
-		shapeRenderer.begin(ShapeType.Filled);
-		shapeRenderer.setColor(0.65f, 0, 0, 1);
-		shapeRenderer.rect(x, y, HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT);
-		shapeRenderer.setColor(1, 0, 0, 1);
-		shapeRenderer.rect(x, y, barWidth, HEALTH_BAR_HEIGHT);
-		shapeRenderer.end();
-
-	}
-
-	private void drawScore() {
-		spriteBatch.setProjectionMatrix(guiCam.combined);
-		spriteBatch.begin();
-		float x = guiCam.position.x + (GUI_CAM_WIDTH / 2)
-				- font.getBounds("" + World.score).width - 25;
-		float y = guiCam.position.y + (GUI_CAM_HEIGHT / 2) - 10;
-		font.draw(spriteBatch, "" + World.score, x, y);
-		spriteBatch.end();
+		worldRenderer.render();
+		guiRenderer.render(worldRenderer.isDebug(), paused);
 	}
 
 	private void processAccelerometerInput() {
@@ -138,6 +105,8 @@ public class GameScreen implements Screen, InputProcessor {
 			return;
 
 		float y = Gdx.input.getAccelerometerY();
+
+		// if accelerometer values are above threshold, move Bob
 		if (Math.abs(y) > ACCELEROMETER_THRESHOLD) {
 			if (y < 0) {
 				controller.rightReleased();
@@ -147,6 +116,12 @@ public class GameScreen implements Screen, InputProcessor {
 				controller.rightPressed();
 			}
 		} else {
+			// otherwise, just change Bob's side
+			if (y < 0) {
+				world.getBob().setFacingLeft(true);
+			} else {
+				world.getBob().setFacingLeft(false);
+			}
 			controller.leftReleased();
 			controller.rightReleased();
 		}
@@ -165,6 +140,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public void pause() {
+		paused = true;
 		Gdx.input.setInputProcessor(null);
 	}
 
@@ -191,7 +167,7 @@ public class GameScreen implements Screen, InputProcessor {
 		if (keycode == Keys.X)
 			controller.firePressed();
 		if (keycode == Keys.D)
-			renderer.setDebug(!renderer.isDebug());
+			worldRenderer.setDebug(!worldRenderer.isDebug());
 		return true;
 	}
 
@@ -206,9 +182,8 @@ public class GameScreen implements Screen, InputProcessor {
 		if (keycode == Keys.X)
 			controller.fireReleased();
 		if (keycode == Keys.BACK || keycode == Keys.ESCAPE) {
-			levelNumber = 1;
-			world.clear();
-			game.setScreen(game.mainMenuScreen);
+			paused = true;
+			Gdx.input.setInputProcessor(null);
 		}
 		return true;
 	}

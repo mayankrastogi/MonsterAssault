@@ -145,6 +145,13 @@ public class BobController {
 			bob.setState(State.IDLE);
 		}
 	}
+	
+	private void releaseAllKeys() {
+		leftReleased();
+		rightReleased();
+		jumpReleased();
+		fireReleased();
+	}
 
 	/** The main update method **/
 	public void update(float delta) {
@@ -355,6 +362,7 @@ public class BobController {
 					.setLevelNumber(game.gameScreen.getLevelNumber() + 1);
 			// Bonus score on level-completion
 			World.score += 100;
+			releaseAllKeys();
 			game.setScreen(game.loadingScreen);
 		}
 		// Play level change sound and vibrate

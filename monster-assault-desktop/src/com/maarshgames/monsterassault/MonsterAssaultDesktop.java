@@ -10,7 +10,7 @@ public class MonsterAssaultDesktop {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 
 		config.title = "Monster Assault";
-		config.width = 848;
+		config.width = 854;
 		config.height = 480;
 		config.useGL20 = true;
 		config.addIcon("icons/icon_128.png", FileType.Internal);

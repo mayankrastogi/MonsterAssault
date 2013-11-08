@@ -41,8 +41,8 @@ public class GameOverScreen implements Screen, InputProcessor {
 		spriteBatch.begin();
 		spriteBatch.draw(background, 0, 0, width, height);
 		font.draw(spriteBatch, "" + score,
-				width / 2f - font.getBounds("" + score).width / 2f,
-				height / 2f - 80);
+				width / 2f - font.getBounds("" + score).width / 2f, height / 2f
+						- 0.15f * height);
 		spriteBatch.end();
 	}
 
@@ -60,7 +60,7 @@ public class GameOverScreen implements Screen, InputProcessor {
 		spriteBatch = new SpriteBatch();
 
 		font = assets.get("fonts/villa.fnt", BitmapFont.class);
-		
+
 		// Play game-over sound
 		assets.get("sounds/game-over.wav", Sound.class).play();
 

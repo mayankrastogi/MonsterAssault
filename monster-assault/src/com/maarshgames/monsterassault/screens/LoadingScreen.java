@@ -38,7 +38,7 @@ public class LoadingScreen implements Screen {
 			spriteBatch.draw(background, 0, 0, width, height);
 			font.draw(spriteBatch, progress + "%",
 					width / 2f - font.getBounds(progress + "%").width / 2f,
-					height / 2f - 80);
+					height / 2f - 0.167f * height);
 			spriteBatch.end();
 		} else {
 			background = null;
@@ -62,6 +62,7 @@ public class LoadingScreen implements Screen {
 
 		// Load backgrounds
 		assets.load("images/game-over.jpg", Texture.class);
+		assets.load("images/game-paused.png", Texture.class);
 
 		// Load textures
 		assets.load("images/textures/BobAndMap.pack", TextureAtlas.class);
