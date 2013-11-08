@@ -45,8 +45,6 @@ public class GameScreen implements Screen, InputProcessor {
 	private SpriteBatch spriteBatch;
 	private BitmapFont font;
 
-	private int width, height;
-
 	private int touchFire, touchJump;
 	private int levelNumber = 1;
 
@@ -81,6 +79,10 @@ public class GameScreen implements Screen, InputProcessor {
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0.48f, 0.83f, 0.9f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+
+		// Restrict max. value of delta to 1/60 of a second so that Bob doesn't
+		// fall off
+		delta = Math.min(delta, 1f / 60f);
 
 		// If all enemies are dead, open the exit door
 		if (World.enemiesLeft == 0
@@ -152,8 +154,6 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public void resize(int width, int height) {
-		this.width = width;
-		this.height = height;
 		this.touchFire = width / 4;
 		this.touchJump = (3 * width) / 4;
 	}
