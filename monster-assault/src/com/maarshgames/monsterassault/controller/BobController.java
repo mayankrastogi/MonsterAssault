@@ -145,7 +145,7 @@ public class BobController {
 			bob.setState(State.IDLE);
 		}
 	}
-	
+
 	private void releaseAllKeys() {
 		leftReleased();
 		rightReleased();
@@ -411,7 +411,22 @@ public class BobController {
 					}
 				}
 			}
-			if (keys.get(Keys.LEFT) && !bob.getState().equals(State.FIRING)) {
+			if (keys.get(Keys.FIRE) && !bob.getState().equals(State.JUMPING)) {
+				// fire is pressed
+				if (!bob.getState().equals(State.FIRING)) {
+					bob.setState(State.FIRING);
+					ballFired = false;
+					fireLongPressed = false;
+					// Play Bob shoot sound
+					bobShootSound.play();
+				} else if (!fireLongPressed
+						&& bob.getStateTime() >= WorldRenderer.FIRING_FRAME_DURATION * 3) {
+					fireLongPressed = true;
+					ballFired = false;
+				}
+				bob.getAcceleration().x = 0;
+			} else if (keys.get(Keys.LEFT)
+					&& !bob.getState().equals(State.FIRING)) {
 				// left is pressed
 				bob.setFacingLeft(true);
 				if (!bob.getState().equals(State.JUMPING)
@@ -428,21 +443,6 @@ public class BobController {
 					bob.setState(State.WALKING);
 				}
 				bob.getAcceleration().x = ACCELERATION;
-			} else if (keys.get(Keys.FIRE)
-					&& !bob.getState().equals(State.JUMPING)) {
-				// fire is pressed
-				if (!bob.getState().equals(State.FIRING)) {
-					bob.setState(State.FIRING);
-					ballFired = false;
-					fireLongPressed = false;
-					// Play Bob shoot sound
-					bobShootSound.play();
-				} else if (!fireLongPressed
-						&& bob.getStateTime() >= WorldRenderer.FIRING_FRAME_DURATION * 3) {
-					fireLongPressed = true;
-					ballFired = false;
-				}
-				bob.getAcceleration().x = 0;
 			} else {
 				if (!bob.getState().equals(State.JUMPING)
 						&& !bob.getState().equals(State.FIRING)
