@@ -31,7 +31,7 @@ public class BobController {
 	private static final float GRAVITY = -20f;
 	private static final float MAX_JUMP_SPEED = 5.3f;
 	private static final float DAMP = 0.90f;
-	private static final float MAX_VEL = 4f;
+	private static final float MAXIMUM_VELOCITY = 4f;
 
 	public static final int BOB_HIT_VIBRATION_DURATION = 200;
 	public static final int LEVEL_CHANGE_VIBRATION_DURATION = 200;
@@ -108,6 +108,10 @@ public class BobController {
 		levelChangeSound = assets.get("sounds/level-change.wav", Sound.class);
 	}
 
+	public static float getMaximumVelocity() {
+		return MAXIMUM_VELOCITY;
+	}
+
 	// ** Key presses and touches **************** //
 
 	public void leftPressed() {
@@ -154,7 +158,7 @@ public class BobController {
 	}
 
 	/** The main update method **/
-	public void update(float delta) {
+	public void update(float delta, float maxVelocity) {
 		// simply updates the state time
 		bob.update(delta);
 
@@ -213,11 +217,11 @@ public class BobController {
 		}
 
 		// ensure terminal velocity is not exceeded
-		if (bob.getVelocity().x > MAX_VEL) {
-			bob.getVelocity().x = MAX_VEL;
+		if (bob.getVelocity().x > maxVelocity) {
+			bob.getVelocity().x = maxVelocity;
 		}
-		if (bob.getVelocity().x < -MAX_VEL) {
-			bob.getVelocity().x = -MAX_VEL;
+		if (bob.getVelocity().x < -maxVelocity) {
+			bob.getVelocity().x = -maxVelocity;
 		}
 
 	}

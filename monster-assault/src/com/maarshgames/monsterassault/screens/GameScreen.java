@@ -13,6 +13,7 @@ import com.maarshgames.monsterassault.MonsterAssault;
 import com.maarshgames.monsterassault.controller.BobController;
 import com.maarshgames.monsterassault.model.Ball;
 import com.maarshgames.monsterassault.model.Block.Type;
+import com.maarshgames.monsterassault.model.Bob.State;
 import com.maarshgames.monsterassault.model.Enemy;
 import com.maarshgames.monsterassault.model.World;
 import com.maarshgames.monsterassault.view.GuiRenderer;
@@ -20,7 +21,10 @@ import com.maarshgames.monsterassault.view.WorldRenderer;
 
 public class GameScreen implements Screen, InputProcessor {
 
-	private static final float ACCELEROMETER_THRESHOLD = 0.8f;
+	private static final float ACCELEROMETER_MOVE_THRESHOLD = 0.4f;
+	private static final float ACCELEROMETER_MAX_ACCELERATION_THRESHOLD = 1.5f;
+	private static final float ACCELEROMETER_ADJUST = BobController
+			.getMaximumVelocity() / ACCELEROMETER_MAX_ACCELERATION_THRESHOLD;
 
 	private MonsterAssault game;
 	private World world;
@@ -80,8 +84,7 @@ public class GameScreen implements Screen, InputProcessor {
 			for (Ball ball : world.getBalls()) {
 				ball.update(delta);
 			}
-			processAccelerometerInput();
-			controller.update(delta);
+			controller.update(delta, getMaxVelocityFromAccelerometerInput());
 		} else {
 			if (Gdx.input.justTouched()) {
 				// if screen is touched while paused, resume the game
@@ -100,23 +103,16 @@ public class GameScreen implements Screen, InputProcessor {
 		guiRenderer.render(worldRenderer.isDebug(), paused);
 	}
 
-	private void processAccelerometerInput() {
-		if (!Gdx.app.getType().equals(ApplicationType.Android))
-			return;
+	private float getMaxVelocityFromAccelerometerInput() {
+		if (!Gdx.app.getType().equals(ApplicationType.Android)
+				|| world.getBob().getState().equals(State.DYING))
+			return BobController.getMaximumVelocity();
 
 		float y = Gdx.input.getAccelerometerY();
 
-		// if accelerometer values are above threshold, move Bob
-		if (Math.abs(y) > ACCELEROMETER_THRESHOLD) {
-			if (y < 0) {
-				controller.rightReleased();
-				controller.leftPressed();
-			} else {
-				controller.leftReleased();
-				controller.rightPressed();
-			}
-		} else {
-			// otherwise, just change Bob's side
+		if (Math.abs(y) < ACCELEROMETER_MOVE_THRESHOLD) {
+			// If accelerometer is below movement threshold, just change Bob's
+			// direction of facing
 			if (y < 0) {
 				world.getBob().setFacingLeft(true);
 			} else {
@@ -124,6 +120,21 @@ public class GameScreen implements Screen, InputProcessor {
 			}
 			controller.leftReleased();
 			controller.rightReleased();
+			return 0;
+		} else {
+			if (y < 0) {
+				controller.rightReleased();
+				controller.leftPressed();
+			} else {
+				controller.leftReleased();
+				controller.rightPressed();
+			}
+			// if accelerometer is above movement threshold but below max
+			// velocity threshold, return calculated velocity; else return
+			// maximum allowed velocity
+			return (Math.abs(y) - ACCELEROMETER_MOVE_THRESHOLD < ACCELEROMETER_MAX_ACCELERATION_THRESHOLD) ? (Math
+					.abs(y) - ACCELEROMETER_MOVE_THRESHOLD)
+					* ACCELEROMETER_ADJUST : BobController.getMaximumVelocity();
 		}
 	}
 
